@@ -82,8 +82,10 @@ class GitRepositoryCommand(stWindowCommand):
                 ("Diff not staged changes", lambda: self.not_staged_diff(file_name)))
 
         if "D" not in status:
-            actions.append(
-                ("Remove file", lambda: self.remove_file(file_name)))
+            actions.extend([
+                # ("Open file", lambda: self.open_file(file_name)),
+                ("Remove file", lambda: self.remove_file(file_name)),
+            ])
 
         return actions
 
