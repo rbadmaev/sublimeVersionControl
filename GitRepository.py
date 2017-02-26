@@ -9,8 +9,8 @@ from .st3_CommandsBase.WindowCommand import stWindowCommand
 class GitRepositoryCommand(stWindowCommand):
     def run(self):
         commands = [
-            ("Show all modifications", self.all_modifications),
-            ("Commit changes", self.commit),
+            ("REPOSITORY: Show all modifications", self.all_modifications),
+            ("REPOSITORY: Commit changes", self.commit),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -67,24 +67,24 @@ class GitRepositoryCommand(stWindowCommand):
         actions = []
         if status[1] != " ":
             actions.append(
-                ("Add to index", lambda: self.add_to_index(file_name)))
+                ("FILE: Add to index", lambda: self.add_to_index(file_name)))
 
         if status[0] != " " and status[0] != "?":
             actions.append(
-                ("Remove from index", lambda: self.remove_from_index(file_name)))
+                ("FILE: Remove from index", lambda: self.remove_from_index(file_name)))
 
         if status[0] == "M":
             actions.append(
-                ("Diff staged for commit", lambda: self.staged_diff(file_name)))
+                ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name)))
 
         if status[1] == "M":
             actions.append(
-                ("Diff not staged changes", lambda: self.not_staged_diff(file_name)))
+                ("FILE: Diff not staged changes", lambda: self.not_staged_diff(file_name)))
 
         if "D" not in status:
             actions.extend([
-                # ("Open file", lambda: self.open_file(file_name)),
-                ("Remove file", lambda: self.remove_file(file_name)),
+                # ("FILE: Open file", lambda: self.open_file(file_name)),
+                ("FILE: Remove file", lambda: self.remove_file(file_name)),
             ])
 
         return actions
