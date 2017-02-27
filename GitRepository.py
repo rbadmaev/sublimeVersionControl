@@ -61,9 +61,17 @@ class GitRepositoryCommand(stWindowCommand):
     def remove_file(self, file_name):
         self.window.run_command("remove_custom_file", file_name)
 
+    def revert_file(self, file_name):
+        subprocess.Popen(
+            ["git", "checkout", "--", file_name],
+            cwd=self.path)
+
     def get_file_actions(self, file_name, status):
         assert (len(status) == 2)
-        actions = []
+        actions = [
+            ("FILE: revert changes", lambda: self.revert_file(file_name)),
+        ]
+
         if status[1] != " ":
             actions.append(
                 ("FILE: Add to index", lambda: self.add_to_index(file_name)))
