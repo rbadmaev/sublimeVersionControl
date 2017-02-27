@@ -55,8 +55,7 @@ class GitRepositoryCommand(stWindowCommand):
         assert (file_name)
 
         subprocess.Popen(
-            ["git", "rm", "--cached", file_name],
-            stdout=subprocess.PIPE,
+            ["git", "reset", "HEAD", "--", file_name],
             cwd=self.path)
 
     def remove_file(self, file_name):
