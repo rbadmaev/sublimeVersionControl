@@ -3,6 +3,8 @@
 import os
 import subprocess
 
+import sublime
+
 from .st3_CommandsBase.WindowCommand import stWindowCommand
 
 
@@ -10,6 +12,7 @@ class GitRepositoryCommand(stWindowCommand):
     def run(self):
         commands = [
             ("REPOSITORY: Show all modifications", self.all_modifications),
+            ("REPOSITORY: Show log", self.log),
             ("REPOSITORY: Commit changes", self.commit),
         ]
 
@@ -48,7 +51,6 @@ class GitRepositoryCommand(stWindowCommand):
 
         subprocess.Popen(
             ["git", "add", file_name],
-            stdout=subprocess.PIPE,
             cwd=self.path)
 
     def remove_from_index(self, file_name):
@@ -59,7 +61,7 @@ class GitRepositoryCommand(stWindowCommand):
             cwd=self.path)
 
     def remove_file(self, file_name):
-        self.window.run_command("remove_custom_file", file_name)
+        os.remove(os.path.join(self.path, file_name))
 
     def revert_file(self, file_name):
         subprocess.Popen(
@@ -145,3 +147,46 @@ class GitRepositoryCommand(stWindowCommand):
             make_commit,
             None,
             None)
+
+    def log(self):
+        # subprocess.Popen(
+        #     "gitk",
+        #     cwd=self.path)
+
+        GRAPH = 0
+        TITLE = 1
+        AUTHOR = 2
+        HASH = 3
+        TAG = 4
+
+        p = subprocess.Popen([
+            "git",
+            "log",
+            "--date-order",
+            '--oneline',
+            '--graph',
+            '--all',
+            '-50',
+            '--format=!SEP!%f!SEP!%cN!SEP!%!SEP!%d'],
+            stdout=subprocess.PIPE,
+            cwd=self.path)
+        out, err = p.communicate()
+        max_graph_size = 0
+        commits = []
+        views = []
+        for c in out.decode("utf-8").splitlines():
+            c = c.split("!SEP!")
+            max_graph_size = max(max_graph_size, len(c[GRAPH]))
+            commits.append(c)
+
+        views = []
+        for c in commits:
+            if len(c) > AUTHOR:
+                views.append(c[GRAPH].ljust(max_graph_size) + c[TITLE].ljust(300) + " " + c[AUTHOR][:5])
+            else:
+                views.append(c[GRAPH])
+
+        self.SelectItem(
+            views,
+            lambda i: None,
+            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
