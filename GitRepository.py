@@ -71,7 +71,7 @@ class GitRepositoryCommand(stWindowCommand):
     def get_file_actions(self, file_name, status):
         assert (len(status) == 2)
         actions = [
-            ("FILE: revert changes", lambda: self.revert_file(file_name)),
+            # ("FILE: revert changes", lambda: self.revert_file(file_name)),
         ]
 
         if status[1] != " ":
@@ -153,38 +153,30 @@ class GitRepositoryCommand(stWindowCommand):
         #     "gitk",
         #     cwd=self.path)
 
-        GRAPH = 0
+        FTAG = 0
         TITLE = 1
         AUTHOR = 2
         HASH = 3
-        TAG = 4
+        DATE = 4
 
         p = subprocess.Popen([
             "git",
             "log",
             "--date-order",
             '--oneline',
-            '--graph',
-            '--all',
             '-50',
-            '--format=!SEP!%f!SEP!%cN!SEP!%!SEP!%d'],
+            '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ad'],
             stdout=subprocess.PIPE,
             cwd=self.path)
         out, err = p.communicate()
-        max_graph_size = 0
-        commits = []
-        views = []
-        for c in out.decode("utf-8").splitlines():
-            c = c.split("!SEP!")
-            max_graph_size = max(max_graph_size, len(c[GRAPH]))
-            commits.append(c)
+        commits = [c.split("!SEP!") for c in out.decode("utf-8").splitlines()]
 
         views = []
         for c in commits:
-            if len(c) > AUTHOR:
-                views.append(c[GRAPH].ljust(max_graph_size) + c[TITLE].ljust(300) + " " + c[AUTHOR][:5])
-            else:
-                views.append(c[GRAPH])
+            views.append([
+                c[TAG] + " " + c[AUTHOR] + " " + c[DATE],
+                c[TITLE].replace('-', ' ')
+            ])
 
         self.SelectItem(
             views,
