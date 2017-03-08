@@ -153,7 +153,7 @@ class GitRepositoryCommand(stWindowCommand):
         #     "gitk",
         #     cwd=self.path)
 
-        FTAG = 0
+        TAG = 0
         TITLE = 1
         AUTHOR = 2
         HASH = 3
