@@ -207,7 +207,7 @@ class GitRepositoryCommand(stWindowCommand):
             [
                 "git",
                 "diff",
-                commit,
+                commit+"^!",
                 '--',
                 file
             ],
