@@ -180,5 +180,24 @@ class GitRepositoryCommand(stWindowCommand):
 
         self.SelectItem(
             views,
+            lambda i: self.show_commit(commits[i][HASH]),
+            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
+
+    def show_commit(self, commit):
+        p = subprocess.Popen(
+            [
+                "git",
+                "show",
+                "--name-only",
+                '--format=',
+                commit
+            ],
+            stdout=subprocess.PIPE,
+            cwd=self.path)
+        out, err = p.communicate()
+        files = out.decode("utf-8").splitlines()
+
+        self.SelectItem(
+            files,
             lambda i: None,
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
