@@ -199,5 +199,17 @@ class GitRepositoryCommand(stWindowCommand):
 
         self.SelectItem(
             files,
-            lambda i: None,
+            lambda i: self.diff_for_file_in_commit(commit, files[i]),
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
+
+    def diff_for_file_in_commit(self, commit, file):
+        subprocess.Popen(
+            [
+                "git",
+                "diff",
+                commit,
+                '--',
+                file
+            ],
+            cwd=self.path)
+
