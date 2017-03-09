@@ -64,15 +64,21 @@ class GitRepositoryCommand(stWindowCommand):
         os.remove(os.path.join(self.path, file_name))
 
     def revert_file(self, file_name):
+        if not sublime.ok_cancel_dialog(
+            "Do you really want to revert all changes in '{}'".format(file_name)):
+            return
+
         subprocess.Popen(
             ["git", "checkout", "--", file_name],
             cwd=self.path)
 
     def get_file_actions(self, file_name, status):
         assert (len(status) == 2)
-        actions = [
-            # ("FILE: revert changes", lambda: self.revert_file(file_name)),
-        ]
+        actions = []
+
+        if status[0] == "M":
+            actions.append(
+                ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name)))
 
         if status[1] != " ":
             actions.append(
@@ -81,10 +87,6 @@ class GitRepositoryCommand(stWindowCommand):
         if status[0] != " " and status[0] != "?":
             actions.append(
                 ("FILE: Remove from index", lambda: self.remove_from_index(file_name)))
-
-        if status[0] == "M":
-            actions.append(
-                ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name)))
 
         if status[1] == "M":
             actions.append(
@@ -95,6 +97,10 @@ class GitRepositoryCommand(stWindowCommand):
                 # ("FILE: Open file", lambda: self.open_file(file_name)),
                 ("FILE: Remove file", lambda: self.remove_file(file_name)),
             ])
+
+        if status != "  ":
+            actions.append(
+                ("FILE: Revert changes", lambda: self.revert_file(file_name)),)
 
         return actions
 
