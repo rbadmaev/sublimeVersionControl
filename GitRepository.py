@@ -173,8 +173,8 @@ class GitRepositoryCommand(stWindowCommand):
             "log",
             "--date-order",
             '--oneline',
-            '-50',
-            '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ad'],
+            '-100',
+            '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ar'],
             stdout=subprocess.PIPE,
             cwd=self.path)
         out, err = p.communicate()
@@ -183,7 +183,7 @@ class GitRepositoryCommand(stWindowCommand):
         views = []
         for c in commits:
             views.append([
-                c[TAG] + " " + c[AUTHOR] + " " + c[DATE],
+                (c[TAG] + " " if c[TAG] else "") + c[AUTHOR] + " " + c[DATE] + "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                 c[TITLE].replace('-', ' ')
             ])
 
