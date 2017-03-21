@@ -61,6 +61,9 @@ class GitRepositoryCommand(stWindowCommand):
             cwd=self.path)
 
     def remove_file(self, file_name):
+        if not sublime.ok_cancel_dialog(
+            "Do you really want to remove file '{}'?".format(file_name)):
+            return
         os.remove(os.path.join(self.path, file_name))
 
     def revert_file(self, file_name):
@@ -198,6 +201,14 @@ class GitRepositoryCommand(stWindowCommand):
                 '--format=',
                 commit
             ],
+            # [
+            #     "git",
+            #     "diff-tree",
+            #     "--no-commit-id",
+            #     "--name-only",
+            #     '-r',
+            #     commit
+            # ],
             stdout=subprocess.PIPE,
             cwd=self.path)
         out, err = p.communicate()
