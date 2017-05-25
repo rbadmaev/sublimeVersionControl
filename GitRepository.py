@@ -208,7 +208,7 @@ class GitRepositoryCommand(stWindowCommand):
             lambda i: self.show_commit(commits[i][HASH]),
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
 
-    def show_commit(self, commit):
+    def show_commit(self, commit, preselectedIndex=0):
         p = subprocess.Popen(
             [
                 "git",
@@ -230,10 +230,15 @@ class GitRepositoryCommand(stWindowCommand):
         out, err = p.communicate()
         files = out.decode("utf-8").splitlines()
 
+        def run(i):
+            self.diff_for_file_in_commit(commit, files[i])
+            self.show_commit(commit, i)
+
         self.SelectItem(
             files,
-            lambda i: self.diff_for_file_in_commit(commit, files[i]),
-            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
+            run,
+            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
+            selectedIndex=preselectedIndex)
 
     def diff_for_file_in_commit(self, commit, file):
         subprocess.Popen(
@@ -245,4 +250,3 @@ class GitRepositoryCommand(stWindowCommand):
                 file
             ],
             cwd=self.path)
-
