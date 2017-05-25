@@ -129,23 +129,26 @@ class GitRepositoryCommand(stWindowCommand):
         files = [[f[3:], f[:2]] for f in files]
         return files
 
-    def all_modifications(self, preselected=None):
-        def get_status_str(status):
-            assert (len(status) == 2)
-            return \
-                "[ ]+ " if status == "??" else \
-                "[+]  " if status == "A " else \
-                "[+]x " if status == "AM" else \
-                "[ ]x " if status == " M" else \
-                "[x]  " if status == "M " else \
-                "[x]x " if status == "MM" else \
-                "[x]- " if status == "MD" else \
-                "[ ]- " if status == " D" else \
-                "[-]  " if status == "D " else \
-                status
+    @staticmethod
+    def get_status_str(status):
+        while len(status) < 2:
+            status += ' '
 
+        return \
+            "[ ]+ " if status == "??" else \
+            "[+]  " if status == "A " else \
+            "[+]x " if status == "AM" else \
+            "[ ]x " if status == " M" else \
+            "[x]  " if status == "M " else \
+            "[x]x " if status == "MM" else \
+            "[x]- " if status == "MD" else \
+            "[ ]- " if status == " D" else \
+            "[-]  " if status == "D " else \
+            status
+
+    def all_modifications(self, preselected=None):
         files = self.get_all_modified_files()
-        file_views = [get_status_str(f[1]) + f[0] for f in files]
+        file_views = [self.get_status_str(f[1]) + f[0] for f in files]
         preselectedIndex = 0
         if preselected:
             for i in range(len(files)):
@@ -222,11 +225,12 @@ class GitRepositoryCommand(stWindowCommand):
             ],
             stdout=subprocess.PIPE,
             cwd=self.path)
+
         out, err = p.communicate()
-        views = out.decode("utf-8").splitlines()
-        files = [f[f.index('\t'):].strip() for f in views]
+        files = [f.split('\t') for f in out.decode("utf-8").splitlines()]
+        views = [self.get_status_str(f[0]) + '\t' + f[1] for f in files]
         if parentAction:
-            files = ['..']  + files
+            files = [('..', '')]  + files
             views = ['..'] + views
 
         def run(i):
@@ -234,7 +238,7 @@ class GitRepositoryCommand(stWindowCommand):
                 parentAction()
                 return
 
-            self.diff_for_file_in_commit(commit, files[i])
+            self.diff_for_file_in_commit(commit, files[i][1])
             self.show_commit(commit, parentAction, i)
 
         self.SelectItem(
