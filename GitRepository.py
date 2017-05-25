@@ -107,12 +107,17 @@ class GitRepositoryCommand(stWindowCommand):
 
         return actions
 
-    def choose_file_action(self, file_name, status):
+    def choose_file_action(self, file_name, status, continuation=lambda: None):
         actions = self.get_file_actions(file_name, status)
         items = [a[0] for a in actions]
+
+        def run(i):
+            actions[i][1]()
+            continuation()
+
         self.SelectItem(
             items,
-            lambda i: actions[i][1]())
+            run)
 
     def get_all_modified_files(self):
         p = subprocess.Popen(
@@ -124,7 +129,7 @@ class GitRepositoryCommand(stWindowCommand):
         files = [[f[3:], f[:2]] for f in files]
         return files
 
-    def all_modifications(self):
+    def all_modifications(self, preselected=None):
         def get_status_str(status):
             assert (len(status) == 2)
             return \
@@ -141,9 +146,20 @@ class GitRepositoryCommand(stWindowCommand):
 
         files = self.get_all_modified_files()
         file_views = [get_status_str(f[1]) + f[0] for f in files]
+        preselectedIndex = 0
+        if preselected:
+            for i in range(len(files)):
+                if files[i][0] == preselected:
+                    preselectedIndex = i
+                    break
+
         self.SelectItem(
             file_views,
-            lambda i: self.choose_file_action(files[i][0], files[i][1]))
+            lambda i: self.choose_file_action(
+                files[i][0],
+                files[i][1],
+                lambda: self.all_modifications(files[i][0])),
+            selectedIndex=preselectedIndex)
 
     def commit(self):
         def make_commit(message):
@@ -173,7 +189,7 @@ class GitRepositoryCommand(stWindowCommand):
             "log",
             "--date-order",
             '--oneline',
-            '-100',
+            '-1000',
             '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ar'],
             stdout=subprocess.PIPE,
             cwd=self.path)
@@ -183,8 +199,8 @@ class GitRepositoryCommand(stWindowCommand):
         views = []
         for c in commits:
             views.append([
-                (c[TAG] + " " if c[TAG] else "") + c[AUTHOR] + " " + c[DATE] + "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
-                c[TITLE].replace('-', ' ')
+                c[TITLE].replace('-', ' ') + '\t' + c[HASH],
+                (c[TAG] + " " if c[TAG] else "") + c[AUTHOR] + " " + c[DATE],
             ])
 
         self.SelectItem(
