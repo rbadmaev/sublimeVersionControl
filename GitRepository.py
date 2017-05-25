@@ -135,20 +135,20 @@ class GitRepositoryCommand(stWindowCommand):
             status += ' '
 
         return \
-            "[ ]+ " if status == "??" else \
-            "[+]  " if status == "A " else \
-            "[+]x " if status == "AM" else \
-            "[ ]x " if status == " M" else \
-            "[x]  " if status == "M " else \
-            "[x]x " if status == "MM" else \
-            "[x]- " if status == "MD" else \
-            "[ ]- " if status == " D" else \
-            "[-]  " if status == "D " else \
+            "[ ]+" if status == "??" else \
+            "[+] " if status == "A " else \
+            "[+]x" if status == "AM" else \
+            "[ ]x" if status == " M" else \
+            "[x] " if status == "M " else \
+            "[x]x" if status == "MM" else \
+            "[x]-" if status == "MD" else \
+            "[ ]-" if status == " D" else \
+            "[-] " if status == "D " else \
             status
 
     def all_modifications(self, preselected=None):
         files = self.get_all_modified_files()
-        file_views = [self.get_status_str(f[1]) + f[0] for f in files]
+        file_views = [self.get_status_str(f[1]) + '\t' + f[0] for f in files]
         preselectedIndex = 0
         if preselected:
             for i in range(len(files)):
@@ -238,14 +238,59 @@ class GitRepositoryCommand(stWindowCommand):
                 parentAction()
                 return
 
-            self.diff_for_file_in_commit(commit, files[i][1])
-            self.show_commit(commit, parentAction, i)
+            continuation = lambda: self.show_commit(
+                commit=commit,
+                parentAction=parentAction,
+                preselectedIndex=i)
+
+            self.choose_file_in_commit_action(
+                commit=commit,
+                file_name=files[i][1],
+                status=files[i][0],
+                continuation=continuation,
+                parentAction=continuation)
 
         self.SelectItem(
             views,
             run,
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
             selectedIndex=preselectedIndex)
+
+    def get_file_in_commit_actions(self, commit, file_name, status):
+        while len(status) < 2:
+            status += ' '
+        actions = []
+
+        if status[0] == "M":
+            actions.append(
+                ("FILE: Diff", lambda: self.diff_for_file_in_commit(commit, file_name)))
+
+        # if status[0] != "D":
+        #     actions.append(
+        #         ("FILE: Revert to this revision", lambda: self.revert_file_to_commit(commit, file_name)))
+        #     actions.extend([
+        #         # ("FILE: Open file", lambda: self.open_file(file_name)),
+        #         ("FILE: Remove file", lambda: self.remove_file(file_name)),
+        #     ])
+
+        # if status != "  ":
+        #     actions.append(
+        #         ("FILE: Revert changes", lambda: self.revert_file(file_name)),)
+
+        return actions
+
+    def choose_file_in_commit_action(self, commit, file_name, status, continuation=lambda: None, parentAction=None):
+        actions = self.get_file_in_commit_actions(commit, file_name, status)
+        if parentAction:
+            actions = [('..', parentAction)] + actions
+
+        items = [a[0] for a in actions]
+
+        def run(i):
+            actions[i][1]()
+            continuation()
+
+        self.SelectItem(items, run)
 
     def diff_for_file_in_commit(self, commit, file):
         subprocess.Popen(
@@ -257,3 +302,4 @@ class GitRepositoryCommand(stWindowCommand):
                 file
             ],
             cwd=self.path)
+
