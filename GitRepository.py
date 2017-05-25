@@ -216,24 +216,18 @@ class GitRepositoryCommand(stWindowCommand):
             [
                 "git",
                 "show",
-                "--name-only",
+                "--name-status",
                 '--format=',
                 commit
             ],
-            # [
-            #     "git",
-            #     "diff-tree",
-            #     "--no-commit-id",
-            #     "--name-only",
-            #     '-r',
-            #     commit
-            # ],
             stdout=subprocess.PIPE,
             cwd=self.path)
         out, err = p.communicate()
-        files = out.decode("utf-8").splitlines()
+        views = out.decode("utf-8").splitlines()
+        files = [f[f.index('\t'):].strip() for f in views]
         if parentAction:
             files = ['..']  + files
+            views = ['..'] + views
 
         def run(i):
             if parentAction and i==0:
@@ -244,7 +238,7 @@ class GitRepositoryCommand(stWindowCommand):
             self.show_commit(commit, parentAction, i)
 
         self.SelectItem(
-            files,
+            views,
             run,
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
             selectedIndex=preselectedIndex)
