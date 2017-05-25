@@ -173,7 +173,7 @@ class GitRepositoryCommand(stWindowCommand):
             None,
             None)
 
-    def log(self):
+    def log(self, preselectedIndex=0):
         # subprocess.Popen(
         #     "gitk",
         #     cwd=self.path)
@@ -205,10 +205,13 @@ class GitRepositoryCommand(stWindowCommand):
 
         self.SelectItem(
             views,
-            lambda i: self.show_commit(commits[i][HASH]),
-            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST)
+            lambda i: self.show_commit(
+                commits[i][HASH],
+                parentAction=lambda: self.log(i)),
+            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
+            selectedIndex=preselectedIndex)
 
-    def show_commit(self, commit, preselectedIndex=0):
+    def show_commit(self, commit, parentAction=None, preselectedIndex=0):
         p = subprocess.Popen(
             [
                 "git",
@@ -229,10 +232,16 @@ class GitRepositoryCommand(stWindowCommand):
             cwd=self.path)
         out, err = p.communicate()
         files = out.decode("utf-8").splitlines()
+        if parentAction:
+            files = ['..']  + files
 
         def run(i):
+            if parentAction and i==0:
+                parentAction()
+                return
+
             self.diff_for_file_in_commit(commit, files[i])
-            self.show_commit(commit, i)
+            self.show_commit(commit, parentAction, i)
 
         self.SelectItem(
             files,
