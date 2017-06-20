@@ -1,0 +1,1231 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"pre",
+				"preselectedIndex"
+			],
+			[
+				"se",
+				"selectedIndex"
+			],
+			[
+				"in",
+				"includes"
+			],
+			[
+				"uni",
+				"unified_path"
+			],
+			[
+				"sr",
+				"src_internal"
+			],
+			[
+				"not",
+				"normpath"
+			],
+			[
+				"c",
+				"collaboration"
+			],
+			[
+				"event",
+				"event_id"
+			],
+			[
+				"vom",
+				"volumeName"
+			],
+			[
+				"mp",
+				"mountPoint"
+			],
+			[
+				"vo",
+				"volume"
+			],
+			[
+				"mo",
+				"mountPoint"
+			],
+			[
+				"min",
+				"minLen"
+			],
+			[
+				"ER",
+				"ERROR_NO_MORE_FILES"
+			],
+			[
+				"ge",
+				"GetLastError"
+			],
+			[
+				"_f",
+				"_findHandle"
+			],
+			[
+				"ras",
+				"raise"
+			],
+			[
+				"bu",
+				"bufferSize"
+			],
+			[
+				"by",
+				"bytes_returned"
+			],
+			[
+				"for",
+				"format"
+			],
+			[
+				"un",
+				"unpack_from"
+			],
+			[
+				"ex",
+				"extendedData"
+			],
+			[
+				"re",
+				"return"
+			],
+			[
+				"da",
+				"dataType"
+			],
+			[
+				"Str",
+				"STRUCTURE"
+			],
+			[
+				"fix",
+				"fixedData"
+			],
+			[
+				"len",
+				"length"
+			],
+			[
+				"le",
+				"lenght"
+			],
+			[
+				"clas",
+				"classmethod"
+			],
+			[
+				"data",
+				"dataType"
+			],
+			[
+				"Data",
+				"DataType"
+			],
+			[
+				"po",
+				"portHandle"
+			],
+			[
+				"ULONG",
+				"ULONG32"
+			],
+			[
+				"time",
+				"timeout"
+			],
+			[
+				"cl",
+				"clientList"
+			],
+			[
+				"fina",
+				"fileNameInfoPtr"
+			],
+			[
+				"si",
+				"size_t"
+			],
+			[
+				"padi",
+				"ParentDirLen"
+			],
+			[
+				"Pa",
+				"ParentDir"
+			],
+			[
+				"Eve",
+				"EventMessage"
+			],
+			[
+				"ma",
+				"majorFunction"
+			],
+			[
+				"von",
+				"volumeNameLength"
+			],
+			[
+				"vona",
+				"volumeNameUnicode"
+			],
+			[
+				"vlo",
+				"volumeName"
+			],
+			[
+				"vol",
+				"volumeName"
+			],
+			[
+				"SetPA",
+				"SET_PATH_COMMAND"
+			],
+			[
+				"INb",
+				"InputBufferSize"
+			],
+			[
+				"STA",
+				"STATUS_INVALID_PARAMETER"
+			],
+			[
+				"I",
+				"IoStatus"
+			],
+			[
+				"Inp",
+				"InputBufferSize"
+			],
+			[
+				"set",
+				"setPathData"
+			],
+			[
+				"cle",
+				"clientList"
+			],
+			[
+				"ata",
+				"attachedVolume"
+			],
+			[
+				"pa",
+				"pathLen"
+			],
+			[
+				"P",
+				"PDRIVER_CLIENT"
+			],
+			[
+				"NT",
+				"NTSTATUS"
+			],
+			[
+				"atta",
+				"attachClientToVolume"
+			],
+			[
+				"att",
+				"attachedVolume"
+			],
+			[
+				"at",
+				"attachedVolume"
+			],
+			[
+				"clie",
+				"client"
+			],
+			[
+				"foun",
+				"foundVolume"
+			],
+			[
+				"max",
+				"maxEqualChar"
+			],
+			[
+				"inB",
+				"InputBufferSize"
+			],
+			[
+				"fre",
+				"freeDriverData"
+			],
+			[
+				"ser",
+				"serverPort"
+			],
+			[
+				"cli",
+				"client"
+			],
+			[
+				"Cone",
+				"ConnectionCookie"
+			],
+			[
+				"Lis",
+				"LIST_ENTRY"
+			],
+			[
+				"size",
+				"sizeof"
+			],
+			[
+				"dr",
+				"driverData"
+			],
+			[
+				"dri",
+				"driverData"
+			],
+			[
+				"Client",
+				"ClientPort"
+			],
+			[
+				"PF",
+				"PFLT_PORT"
+			],
+			[
+				"Min",
+				"MiniSpyData"
+			],
+			[
+				"minis",
+				"MiniSpyData"
+			],
+			[
+				"Private",
+				"privatebox_fs_spy"
+			],
+			[
+				"Ou",
+				"OutputBuffer"
+			],
+			[
+				"Val",
+				"ValidateBufferAlignment"
+			],
+			[
+				"ne",
+				"next_usn_shift"
+			],
+			[
+				"str",
+				"struct"
+			],
+			[
+				"fin",
+				"file_name"
+			],
+			[
+				"fi",
+				"FileNameLength"
+			],
+			[
+				"Fil",
+				"FileNameLength"
+			],
+			[
+				"USN",
+				"USN_RECORD_V2"
+			],
+			[
+				"win",
+				"win32file"
+			],
+			[
+				"us",
+				"usn_record"
+			],
+			[
+				"Us",
+				"Usn"
+			],
+			[
+				"res",
+				"read_usn_journal_data_v0"
+			],
+			[
+				"from",
+				"from_data"
+			],
+			[
+				"get",
+				"getMessages"
+			],
+			[
+				"file",
+				"files"
+			],
+			[
+				"ass",
+				"assertFileCreatedMsg"
+			],
+			[
+				"_c",
+				"_create_external_file"
+			],
+			[
+				"asse",
+				"assertDirCreatedMsg"
+			],
+			[
+				"_crea",
+				"_create_file"
+			],
+			[
+				"_move",
+				"_move_abs"
+			],
+			[
+				"_ge",
+				"_get_external_abs_path"
+			],
+			[
+				"is_",
+				"is_folder"
+			],
+			[
+				"tra",
+				"traceback"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "GitRepository.py",
+			"settings":
+			{
+				"buffer_size": 9619,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "st3_CommandsBase/WindowCommand.py",
+			"settings":
+			{
+				"buffer_size": 506,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 54.0,
+		"last_filter": "File: un",
+		"selected_items":
+		[
+			[
+				"File: un",
+				"File: Unsaved views..."
+			],
+			[
+				"File: de",
+				"File: Remove (Delete)"
+			],
+			[
+				"Build: f",
+				"Build With: Check direct-link-python with flake8"
+			],
+			[
+				"Build: fla",
+				"Build With: Check direct-link-python with flake8"
+			],
+			[
+				"Build: ",
+				"Build: Cancel"
+			],
+			[
+				"File: dele",
+				"File: Remove (Delete)"
+			],
+			[
+				"cla",
+				"Clang Format: Select Style"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"File: clo",
+				"File: Close All"
+			],
+			[
+				"Convert Case: ca",
+				"Convert Case: camelCase"
+			],
+			[
+				"File: re",
+				"File: Remove (Delete)"
+			],
+			[
+				"File: sa",
+				"File: Save All"
+			],
+			[
+				"File: rena",
+				"File: Rename files with the same base name..."
+			],
+			[
+				"Convert Case: lo",
+				"Convert Case: Lower Case"
+			],
+			[
+				"Convert Case: l",
+				"Convert Case: Lower Case"
+			],
+			[
+				"Convert Case: pas",
+				"Convert Case: PascalCase"
+			],
+			[
+				"File: uns",
+				"File: Unsaved views..."
+			],
+			[
+				"Convert Case: u",
+				"Convert Case: Upper Case"
+			],
+			[
+				"Convert Case: sna",
+				"Convert Case: snake_case"
+			],
+			[
+				"Convert Case: U",
+				"Convert Case: Upper Case"
+			],
+			[
+				"diff",
+				"GitGutter: Show Diff Popup"
+			],
+			[
+				"File: rean",
+				"File: Rename files with the same base name..."
+			],
+			[
+				"File: cop",
+				"File: Copy files with the same base name..."
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"isnta",
+				"Package Control: Install Package"
+			],
+			[
+				"File: clos",
+				"File: Close views with not existing file"
+			],
+			[
+				"File: co",
+				"File: Copy files with the same base name..."
+			],
+			[
+				"File: del",
+				"File: Remove (Delete)"
+			],
+			[
+				"inpa",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"instapa",
+				"Install Package Control"
+			]
+		],
+		"width": 480.0
+	},
+	"console":
+	{
+		"height": 453.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/roman/.config/sublime-text-3/Packages/VersionControl"
+	],
+	"file_history":
+	[
+		"/home/roman/data/projects/swissTech/direct-link-python/a",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/quiet_processor.py",
+		"/home/roman/data/projects/swissTech/driver/src/utils.c",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/file_system_monitor.py.orig",
+		"/home/roman/data/projects/swissTech/driver/src/consts.c",
+		"/home/roman/data/projects/swissTech/direct-link-python/aa",
+		"/home/roman/data/projects/swissTech/driver/console_client.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_sync/test_excluded_dirs.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_sync/web_server_mock.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/doc/collaboration_model.puml",
+		"/home/roman/data/projects/swissTech/signalling/setup.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/sync_mechanism/event_strategies/delete_folder_strategy.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/sync_mechanism/event_strategies/delete_file_strategy.py",
+		"/home/roman/data/projects/swissTech/driver/client/console_client.py",
+		"/home/roman/data/projects/swissTech/driver/client/__init__.py",
+		"/home/roman/data/projects/swissTech/driver/client/utils.py",
+		"/home/roman/data/projects/swissTech/driver/client/communication_port.py",
+		"/home/roman/data/projects/swissTech/driver/client/consts.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/requirements.txt",
+		"/home/roman/data/projects/swissTech/swissTech.sublime-project",
+		"/home/roman/data/projects/swissTech/driver/swissTech_win_fs_driver.sublime-project",
+		"/home/roman/data/projects/swissTech/driver/src/driver_client_list.h",
+		"/home/roman/data/projects/swissTech/driver/src/privatebox_fs_spy.h",
+		"/home/roman/data/projects/swissTech/stuff/jenkins/linux_x64/so/signalling/__init__.py",
+		"/home/roman/data/projects/swissTech/driver/clang_format.settings",
+		"/home/roman/data/projects/swissTech/driver/src/consts.h",
+		"/home/roman/.config/sublime-text-3/Packages/SublimeClangFormat/clang_format_custom.sublime-settings",
+		"/home/roman/.config/sublime-text-3/Packages/SublimeClangFormat/clang_format.py",
+		"/home/roman/.config/sublime-text-3/Packages/User/clang_format.sublime-settings",
+		"/home/roman/.config/sublime-text-3/Packages/User/clang_format_custom.sublime-settings",
+		"/home/roman/data/projects/swissTech/driver/src/privatebox_fs_spy.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.h",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_monitor/test_FilesystemMonitor/test_msg_emit.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/FLT_PREOP_CALLBACK_STATUS)example.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/registration_data.c",
+		"/home/roman/data/projects/swissTech/menu/common/DirectLinkClientAPI.cpp",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/filter_base.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/fs_event_filters.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/modify_external_move_filter.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/calculate_file_signature_filter.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/handle_lost_delete_event_on_windows_filter.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/ignore_on_demand_filter.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/stat_tracking/Tracker.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/shell_integration/ipc_server.py",
+		"/home/roman/data/projects/swissTech/test_USN/test_ntfsjournal.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/console_client.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/privatebox_fs_spy.inf",
+		"/home/roman/data/projects/swissTech/win-fs-driver/build.bat",
+		"/home/roman/data/projects/swissTech/win-fs-driver/user/mspyUser.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/driver_client_list.c",
+		"/home/roman/data/projects/swissTech/menu/windows/ShellExt.cpp",
+		"/home/roman/data/projects/swissTech/win-fs-driver/user/mspyLog.c",
+		"/home/roman/data/projects/swissTech/test_USN/test_usn.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/aggregate_sequential_updates_sub_filter.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/parallel_filters.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/utils.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_monitor/test_FilesystemMonitor/test_accept_move.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_monitor/test_FilesystemMonitor/test_accept_create.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_monitor/test_FilesystemMonitor/test_accept_delete.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/file_system_monitor.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/observer_wrapper.py",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/avscan/filter/avscan.c",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/config.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/application/application_impl.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.vcxproj.Filters",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.vcxproj",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.rc",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/build.bat",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/clean.bat",
+		"/home/roman/data/projects/swissTech/win-fs-driver/privatebox_fs_spy.sln",
+		"/home/roman/data/projects/camWarez/camdrv_new/SourceImage.cpp",
+		"/home/roman/data/projects/PeopleNet/git/build.bat",
+		"/home/roman/data/projects/camWarez/camdrv_new/capture.cpp",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/utils.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/consts.c",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/watchdog_handler.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/__init__.py",
+		"/home/roman/Dropbox/mac bug.txt",
+		"/home/roman/.config/sublime-text-3/Packages/VersionControl/GitRepository.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/tests/test_monitor/test_FilesystemMonitor/__init__.py",
+		"/home/roman/data/projects/swissTech/driver/src/utils.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/utils.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/utils.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/c_type.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/data_types/wide_string.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/data_types/simple_type.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/data_types/__init__.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/__init__.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/communication_port.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/consts.py",
+		"/home/roman/data/projects/swissTech/test_USN/security descriptor example",
+		"/home/roman/data/projects/swissTech/direct-link-python/licence.md",
+		"/home/roman/data/projects/swissTech/win-fs-driver/user/mspyLog.h",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/avscan/user/userscan.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/driver_client_list.h",
+		"/home/roman/data/projects/camWarez/camdrv_new/ScopedPtr.hpp",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/consts.h",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/avscan/user/userscan.h",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/avscan/inc/avlib.h",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy/inc/minispy.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/user_mode_client_api.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/user_mode_client_api.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/RegistrationData.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/parser.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/client/c_parser/data_types/fixed_size.py",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.vcxproj.user",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/mspyKern.h",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy/filter/RegistrationData.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/privatebox_fs_spy.aps",
+		"/home/roman/data/projects/swissTech/win-fs-driver/inc/privatebox_fs_spy.h",
+		"/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy/filter/minispy.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/util.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/util.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/build/x64_Release/private_box_fs_spy.map",
+		"/home/roman/data/projects/swissTech/win-fs-driver/minispy.sln",
+		"/home/roman/data/projects/swissTech/win-fs-driver/minispy.inf",
+		"/home/roman/data/projects/swissTech/win-fs-driver/user",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/directlink_fs_spy.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/inc/minispy.h",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/mspyLib.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/minispy.rc",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/minispy.vcxproj",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter/minispy.c",
+		"/home/roman/data/projects/swissTech/win-fs-driver/filter",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/generate_lost_delete_event_on_windows_sub_filter.py",
+		"/home/roman/data/projects/swissTech/direct-link-python/includes/monitor/filters/generate_lost_delete_event_on_windows_filter.py",
+		"/home/roman/data/projects/swissTech/stuff/scripts/direct-link-python/syntax_check.sh"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 84.0,
+		"where_history":
+		[
+			"*.py, <open_folders>",
+			"*.py,/home/roman/data/projects/swissTech/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/Windows-driver-samples",
+			"*.c*,*.h*,,/home/roman/data/projects/swissTech/driver",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter/",
+			"*.py, <open_folders>",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy/filter",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/Windows-driver-samples/filesys/miniFilter/minispy",
+			"*,/home/roman/data/projects/swissTech/win-fs-driver/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/",
+			"*.c*,*.h*,/home/roman/data/projects/camWarez/camdrv_new",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/user",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter",
+			"*,/home/roman/data/projects/swissTech/win-fs-driver/",
+			"*,/home/roman/data/projects/swissTech/win-fs-driver/filter",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter",
+			"*.c*,*.h*,/home/roman/data/projects/camWarez/camdrv_new",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter",
+			"*.c*,*.h*,/home/roman/data/projects/camWarez/camdrv_new",
+			"*.c*,*.h*,/home/roman/data/projects/swissTech/win-fs-driver/filter",
+			"*.py, <open_folders>"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"preselected",
+			"show_commit",
+			"unified_string",
+			"normpath",
+			"self._root",
+			"normpath",
+			"New event from watchdog",
+			"[2017",
+			"[2017-06",
+			"New event from watchdog",
+			"[2017-06-01",
+			"getMessages",
+			"[2017-06",
+			"\\u041a",
+			"op.normcase",
+			"u0442",
+			"0435",
+			"\\u0422\\u0435\\u0441\\u0442\\u043e\\u0432\\u044b\\u0439 \\u0444\\u0430\\u0439\\u043b1",
+			"\\u0442\\u0435\\u0441\\u0442\\u043e\\u0432\\u044b\\u0439 \\u0444\\u0430\\u0439\\u043b1",
+			"[2017",
+			"relative_path",
+			"_get_file_state_error",
+			"is_folder flag for",
+			"FileEventsDB",
+			"]: local: ",
+			"local:",
+			"update_file_signature",
+			"remove_dir",
+			"style",
+			"styles",
+			"format_on_save",
+			"load_settings",
+			"custom_style_settings",
+			"newlines",
+			"if",
+			"SignalServerClient",
+			"start_download_task",
+			"node_ids",
+			"= Column",
+			"clientList",
+			"filter",
+			"consts.",
+			"c_parser.",
+			"Altitude",
+			"PSCANNER_MESSAGE",
+			"AVSCAN_MESSAGE",
+			"AV_SCANNER_NOTIFICATION",
+			"FltSendMessage",
+			"EventMessage",
+			"Message",
+			"kernel32",
+			"settings_changed",
+			"ConfigLoader",
+			"SetPathCommand",
+			"bytes_returned",
+			"buffer_size",
+			"SpyDisconnect",
+			"SpyConnect",
+			"SpyMessage",
+			"filterException",
+			"SpyExceptionFilter",
+			"spyFilterUnload",
+			"onFilterUnload",
+			"spyPostOperationCallback",
+			"spyPreOperationCallback",
+			"SpyQueryTeardown",
+			"SpyFilterUnload",
+			"SpyPostOperationCallback",
+			"SpyPreOperationCallback",
+			"ValidateBufferAlignment",
+			"freeDriverData",
+			"SetFlagInterlocked",
+			"StatusToBreakOn",
+			"build",
+			"ProjectName",
+			"privatebox_fs_spy",
+			"f",
+			"DataType",
+			"WideStringDataType",
+			"description",
+			"STRUCTURE",
+			"format",
+			"fixedFormat(",
+			"format(",
+			"unpackExtesion",
+			"fixedData",
+			"lenght",
+			"extendedFormat",
+			"format",
+			"fixedPartFormat",
+			"additional_data",
+			"parse_structure(\"\"\"",
+			"parse_structure",
+			"SpyCommand",
+			"CommandMessage",
+			"time",
+			"sys",
+			"os",
+			"unicode_literals",
+			"ctypes",
+			"mspyKern.h",
+			"ndis.h",
+			"mspyKern.h",
+			"ECP_TYPE",
+			"PFLT_SET_TRANSACTION_CONTEXT",
+			"SpyDeleteTxfContext",
+			"FLT_CONTEXT_END",
+			"Contexts",
+			"FLT_CONTEXT_REGISTRATION",
+			"SpyDeleteTxfContext",
+			"FROM_VISTA",
+			"SpyPreOperationCallback",
+			"FlagOn",
+			"ROUND_TO_SIZE",
+			"Add2Ptr",
+			"RECORD_LIST",
+			"LOG_RECORD",
+			"RECORD_DATA",
+			"FILE_ID",
+			"MINISPY_MIN_VERSION",
+			"MINISPY_MAJ_VERSION",
+			"MINISPYVER",
+			"configuration",
+			"NTSTATUS",
+			"postNotifyClients",
+			"preNotifyClients",
+			"fileNameInfoPtr",
+			"ECP_TYPE"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"onDisconnectClient",
+			"onConnectClient",
+			"onClientMessage",
+			"filterException",
+			"onFilterUnload",
+			"postOperationCallback",
+			"preOperationCallback",
+			"onQueryTeardown",
+			"spyFilterUnload",
+			"spyPostOperationCallback",
+			"spyPreOperationCallback",
+			"description",
+			"SpyCommand",
+			"PSetPathArgs",
+			"SetPathArgs",
+			"PCommandMessage",
+			"CommandMessage",
+			"filterRegistration",
+			"FROM_XP",
+			"FROM_VISTA",
+			"FROM_WIN7",
+			"FROM_WIN8",
+			"USN_RECORD_V2"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": true,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "GitRepository.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9619,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8241,
+								8379
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 264,
+							"git_gutter_is_enabled": true,
+							"moved": true,
+							"on_load": false,
+							"stack_time": "2017-06-14 07:40:11.102341",
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2398.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "st3_CommandsBase/WindowCommand.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 506,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								241,
+								241
+							]
+						],
+						"settings":
+						{
+							"function_name_status_row": 7,
+							"git_gutter_is_enabled": true,
+							"moved": true,
+							"on_load": false,
+							"stack_time": "2017-06-01 14:29:00.268631",
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 19.0
+	},
+	"input":
+	{
+		"height": 25.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 268.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.jotter":
+	{
+		"height": 78.0
+	},
+	"pinned_build_system": "",
+	"project": "VersionControl_sublime_plugin.sublime-project",
+	"replace":
+	{
+		"height": 38.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"git",
+				"GitRepository.py"
+			],
+			[
+				"a",
+				"direct-link-python/a"
+			],
+			[
+				"utisl",
+				"direct-link-python/includes/utils.py"
+			],
+			[
+				"ing",
+				"direct-link-python/includes/monitor/filters/ignore_on_demand_filter.py"
+			],
+			[
+				"fsm",
+				"direct-link-python/includes/monitor/file_system_monitor.py"
+			],
+			[
+				"tesa",
+				"direct-link-python/tests/test_monitor/test_FilesystemMonitor/test_accept_delete.py"
+			],
+			[
+				"fsmock",
+				"direct-link-python/tests/test_sync/fs_mock.py"
+			],
+			[
+				"locas",
+				"direct-link-python/includes/monitor/local_processor.py"
+			],
+			[
+				"path",
+				"direct-link-python/includes/monitor/path_converter.py"
+			],
+			[
+				"tefisymo",
+				"direct-link-python/tests/test_monitor/test_FilesystemMonitor/__init__.py"
+			],
+			[
+				"creafi",
+				"direct-link-python/includes/sync_mechanism/event_strategies/create_file_strategy.py"
+			],
+			[
+				"dele",
+				"direct-link-python/includes/sync_mechanism/event_strategies/delete_file_strategy.py"
+			],
+			[
+				"loece",
+				"direct-link-python/includes/sync_mechanism/event_strategies/local_event_strategy.py"
+			],
+			[
+				"sermo",
+				"direct-link-python/tests/test_sync/web_server_mock.py"
+			],
+			[
+				"asy",
+				"direct-link-python/includes/async.py"
+			],
+			[
+				"evese",
+				"direct-link-python/includes/sync_mechanism/event_strategies/event_serializer.py"
+			],
+			[
+				"que",
+				"direct-link-python/includes/monitor/quiet_processor.py"
+			],
+			[
+				"stora",
+				"direct-link-python/includes/monitor/storage/storage.py"
+			],
+			[
+				"calculatefilehashandsuppressifnotchangedfilter",
+				"direct-link-python/includes/monitor/filters/calculate_file_hash_and_suppress_if_not_changed_filter.py"
+			],
+			[
+				"removeee",
+				"direct-link-python/includes/sync_mechanism/event_strategies/remote_event_strategy.py"
+			],
+			[
+				"fs_spy",
+				"driver/src/privatebox_fs_spy.c"
+			],
+			[
+				"eveq",
+				"direct-link-python/includes/sync_mechanism/event_queue_processor.py"
+			],
+			[
+				"fs_s",
+				"driver/src/privatebox_fs_spy.c"
+			],
+			[
+				"app",
+				"direct-link-python/application/application_impl.py"
+			],
+			[
+				"con",
+				"direct-link-python/includes/config.py"
+			],
+			[
+				"qu",
+				"direct-link-python/includes/monitor/quiet_processor.py"
+			],
+			[
+				"fils",
+				"direct-link-python/includes/monitor/file_system_monitor.py"
+			],
+			[
+				"uti",
+				"direct-link-python/includes/utils.py"
+			],
+			[
+				"team",
+				"direct-link-python/tests/test_monitor/test_FilesystemMonitor/test_accept_move.py"
+			],
+			[
+				"",
+				"direct-link-python/README.md"
+			],
+			[
+				"fiba",
+				"direct-link-python/includes/monitor/filters/filter_base.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/data/projects/swissTech/swissTech.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": false,
+	"side_bar_visible": false,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

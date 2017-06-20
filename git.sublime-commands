@@ -1,0 +1,30 @@
+[
+    {
+        "caption": "MY GIT: Diff",
+        "command": "git_diff",
+    },
+    {
+        "caption": "MY GIT: Log",
+        "command": "git_log",
+    },
+    {
+        "caption": "MY GIT: Add file to index",
+        "command": "git_add",
+    },
+    {
+        "caption": "MY GIT: Status",
+        "command": "git_status",
+    },
+    {
+        "caption": "MY GIT: Check for modifications",
+        "command": "git_check_for_modifications",
+    },
+    // {
+    //     "caption": "MY GIT: Show modifications ready to commit",
+    //     "command": "git_show_modifications_in_index",
+    // },
+    // {
+    //     "caption": "MY GIT: Show new modifications",
+    //     "command": "git_show_new_modifications",
+    // },
+]
