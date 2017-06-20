@@ -20,11 +20,12 @@ class GitRepositoryCommand(stWindowCommand):
             active_file = os.path.abspath(self.window.active_view().file_name())[
                 len(os.path.abspath(self.path))+1:
             ]
-            modified_files = self.get_all_modified_files()
-            active_file = [f for f in modified_files if f[0] == active_file]
-            if active_file:
-                commands.extend(self.get_file_actions(active_file[0][0], active_file[0][1]))
+            commands.append(("FILE: Show log", lambda: self.log(path=active_file)))
 
+            modified_files = self.get_all_modified_files()
+            modified_file = [f for f in modified_files if f[0] == active_file]
+            if modified_file:
+                commands.extend(self.get_file_actions(modified_file[0][0], modified_file[0][1]))
 
         items = [c[0] for c in commands]
         self.SelectItem(items, lambda i: commands[i][1]())
@@ -176,7 +177,7 @@ class GitRepositoryCommand(stWindowCommand):
             None,
             None)
 
-    def log(self, preselectedIndex=0):
+    def log(self, preselectedIndex=0, path=None):
         # subprocess.Popen(
         #     "gitk",
         #     cwd=self.path)
@@ -187,13 +188,18 @@ class GitRepositoryCommand(stWindowCommand):
         HASH = 3
         DATE = 4
 
-        p = subprocess.Popen([
+        cmd = [
             "git",
             "log",
             "--date-order",
             '--oneline',
-            '-1000',
-            '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ar'],
+            '-10000',
+            '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ar']
+        if path:
+            cmd = cmd + ['--', path]
+
+        p = subprocess.Popen(
+            cmd,
             stdout=subprocess.PIPE,
             cwd=self.path)
         out, err = p.communicate()
@@ -210,7 +216,7 @@ class GitRepositoryCommand(stWindowCommand):
             views,
             lambda i: self.show_commit(
                 commits[i][HASH],
-                parentAction=lambda: self.log(i)),
+                parentAction=lambda: self.log(i, path)),
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
             selectedIndex=preselectedIndex)
 
