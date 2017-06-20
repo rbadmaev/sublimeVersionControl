@@ -214,7 +214,7 @@ class GitRepositoryCommand(stWindowCommand):
             Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
             selectedIndex=preselectedIndex)
 
-    def show_commit(self, commit, parentAction=None, preselectedIndex=0):
+    def show_commit(self, commit, parentAction=None, preselectedIndex=1):
         p = subprocess.Popen(
             [
                 "git",
@@ -259,11 +259,12 @@ class GitRepositoryCommand(stWindowCommand):
     def get_file_in_commit_actions(self, commit, file_name, status):
         while len(status) < 2:
             status += ' '
-        actions = []
+        actions = [
+            ("FILE: Diff", lambda: self.diff_for_file_in_commit(commit, file_name))]
 
-        if status[0] == "M":
-            actions.append(
-                ("FILE: Diff", lambda: self.diff_for_file_in_commit(commit, file_name)))
+        # if status[0] == "M":
+        #     actions.append(
+        #         ("FILE: Diff", lambda: self.diff_for_file_in_commit(commit, file_name)))
 
         # if status[0] != "D":
         #     actions.append(
@@ -290,7 +291,7 @@ class GitRepositoryCommand(stWindowCommand):
             actions[i][1]()
             continuation()
 
-        self.SelectItem(items, run)
+        self.SelectItem(items, run, selectedIndex=1)
 
     def diff_for_file_in_commit(self, commit, file):
         subprocess.Popen(
