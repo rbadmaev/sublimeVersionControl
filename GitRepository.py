@@ -20,7 +20,11 @@ class GitRepositoryCommand(stWindowCommand):
             active_file = os.path.abspath(self.window.active_view().file_name())[
                 len(os.path.abspath(self.path))+1:
             ]
-            commands.append(("FILE: Show log", lambda: self.log(path=active_file)))
+            commands.extend([
+                ("FILE: Show log", lambda: self.log(path=active_file)),
+                ("FILE: Blame", lambda: self.blame_file(path=active_file)),
+                ("FILE: Hide blame", lambda: self.hide_blame()),
+            ])
 
             modified_files = self.get_all_modified_files()
             modified_file = [f for f in modified_files if f[0] == active_file]
@@ -310,3 +314,31 @@ class GitRepositoryCommand(stWindowCommand):
             ],
             cwd=self.path)
 
+    def blame_file(self, path):
+        p = subprocess.Popen(
+            [
+                "git",
+                "blame",
+                path
+            ],
+            stdout=subprocess.PIPE,
+            cwd=self.path)
+
+        out, err = p.communicate()
+
+        view = self.window.active_view()
+        view.erase_phantoms ("git blame")
+        phantoms = []
+        row = 0
+        for line in out.decode("utf-8").splitlines():
+            pos = view.text_point(row, 0)
+            view.add_phantom (
+                "git blame",
+                sublime.Region(pos, pos),
+                line[:line.index('+')-1].replace("  ", "..").replace("(", ""),
+                sublime.LAYOUT_INLINE)
+            row += 1
+
+    def hide_blame(self):
+        view = self.window.active_view()
+        view.erase_phantoms ("git blame")
