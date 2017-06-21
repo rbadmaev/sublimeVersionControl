@@ -335,7 +335,7 @@ class GitRepositoryCommand(stWindowCommand):
             view.add_phantom (
                 "git blame",
                 sublime.Region(pos, pos),
-                line[:line.index('+')-1].replace("  ", "..").replace("(", ""),
+                line[:line.index('+')-1].replace("  ", " .").replace("(", ""),
                 sublime.LAYOUT_INLINE)
             row += 1
 
