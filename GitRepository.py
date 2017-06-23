@@ -10,7 +10,7 @@ from .st3_CommandsBase.WindowCommand import stWindowCommand
 class GitRepositoryCommand(stWindowCommand):
     def run(self):
         commands = [
-            ("REPOSITORY: Show all modifications", self.all_modifications),
+            ("REPOSITORY: Show all modifications", lambda: self.all_modifications(parentAction=self.run)),
             ("REPOSITORY: Show log", self.log),
             ("REPOSITORY: Commit changes", self.commit),
         ]
@@ -87,10 +87,6 @@ class GitRepositoryCommand(stWindowCommand):
             actions.append(
                 ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name)))
 
-        # if status[0] == "R":
-        #     actions.append(
-        #         ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name.replace('->', '--'))))
-
         if status[1] != " ":
             actions.append(
                 ("FILE: Add to index", lambda: self.add_to_index(file_name)))
@@ -118,17 +114,23 @@ class GitRepositoryCommand(stWindowCommand):
 
         return actions
 
-    def choose_file_action(self, file_name, status, continuation=lambda: None, parentAction=None):
-        actions = self.get_file_actions(file_name, status, parentAction=parentAction)
+    def choose_file_action(self, file_name, status, parentAction=None):
+        actions = []
+        if parentAction:
+            actions.append(("..", parentAction))
+
+        actions.extend(self.get_file_actions(file_name, status, parentAction=parentAction))
         items = [a[0] for a in actions]
 
         def run(i):
             actions[i][1]()
-            continuation()
+            if parentAction:
+                parentAction()
 
         self.SelectItem(
             items,
-            run)
+            run,
+            selectedIndex=1 if parentAction else 0)
 
     def get_all_modified_files(self):
         p = subprocess.Popen(
@@ -157,23 +159,28 @@ class GitRepositoryCommand(stWindowCommand):
             "[-] " if status == "D " else \
             status
 
-    def all_modifications(self, preselected=None):
-        files = self.get_all_modified_files()
-        file_views = [self.get_status_str(f[1]) + '\t' + f[0] for f in files]
+    def all_modifications(self, preselected=None, parentAction=None):
+        actions = []
         preselectedIndex = 0
-        if preselected:
-            for i in range(len(files)):
-                if files[i][0] == preselected:
-                    preselectedIndex = i
-                    break
+        if parentAction:
+            actions.append(("..", parentAction))
+            preselectedIndex += 1
+
+        files = self.get_all_modified_files()
+        for f in files:
+            if f[0] == preselected:
+                preselectedIndex = len(actions)
+
+            actions.append((
+                self.get_status_str(f[1]) + '\t' + f[0],
+                lambda: self.choose_file_action(
+                    f[0],
+                    f[1],
+                    parentAction=lambda: self.all_modifications(preselected=f[0], parentAction=parentAction))))
 
         self.SelectItem(
-            file_views,
-            lambda i: self.choose_file_action(
-                files[i][0],
-                files[i][1],
-                lambda: self.all_modifications(files[i][0]),
-                parentAction=lambda: self.all_modifications(preselected)),
+            [a[0] for a in actions],
+            lambda i: actions[i][1](),
             selectedIndex=preselectedIndex)
 
     def commit(self):
