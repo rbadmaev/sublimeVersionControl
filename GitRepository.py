@@ -7,7 +7,6 @@ import sublime
 
 from .st3_CommandsBase.WindowCommand import stWindowCommand
 
-
 class GitRepositoryCommand(stWindowCommand):
     def run(self):
         commands = [
@@ -29,7 +28,7 @@ class GitRepositoryCommand(stWindowCommand):
             modified_files = self.get_all_modified_files()
             modified_file = [f for f in modified_files if f[0] == active_file]
             if modified_file:
-                commands.extend(self.get_file_actions(modified_file[0][0], modified_file[0][1]))
+                commands.extend(self.get_file_actions(modified_file[0][0], modified_file[0][1], parentAction=self.run))
 
         items = [c[0] for c in commands]
         self.SelectItem(items, lambda i: commands[i][1]())
@@ -80,13 +79,17 @@ class GitRepositoryCommand(stWindowCommand):
             ["git", "checkout", "--", file_name],
             cwd=self.path)
 
-    def get_file_actions(self, file_name, status):
+    def get_file_actions(self, file_name, status, parentAction=None):
         assert (len(status) == 2)
         actions = []
 
         if status[0] == "M":
             actions.append(
                 ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name)))
+
+        # if status[0] == "R":
+        #     actions.append(
+        #         ("FILE: Diff staged for commit", lambda: self.staged_diff(file_name.replace('->', '--'))))
 
         if status[1] != " ":
             actions.append(
@@ -110,10 +113,13 @@ class GitRepositoryCommand(stWindowCommand):
             actions.append(
                 ("FILE: Revert changes", lambda: self.revert_file(file_name)),)
 
+        actions.append(
+            ("FILE: Add to ignore", lambda: self.add_to_gitignore(file_name, parentAction=parentAction)))
+
         return actions
 
-    def choose_file_action(self, file_name, status, continuation=lambda: None):
-        actions = self.get_file_actions(file_name, status)
+    def choose_file_action(self, file_name, status, continuation=lambda: None, parentAction=None):
+        actions = self.get_file_actions(file_name, status, parentAction=parentAction)
         items = [a[0] for a in actions]
 
         def run(i):
@@ -166,7 +172,8 @@ class GitRepositoryCommand(stWindowCommand):
             lambda i: self.choose_file_action(
                 files[i][0],
                 files[i][1],
-                lambda: self.all_modifications(files[i][0])),
+                lambda: self.all_modifications(files[i][0]),
+                parentAction=lambda: self.all_modifications(preselected)),
             selectedIndex=preselectedIndex)
 
     def commit(self):
@@ -342,3 +349,41 @@ class GitRepositoryCommand(stWindowCommand):
     def hide_blame(self):
         view = self.window.active_view()
         view.erase_phantoms ("git blame")
+
+    def add_to_gitignore(self, path, parentAction=None):
+        path = os.path.normpath(path)
+        def append_ignore(mask):
+            with open(os.path.join(self.path, '.gitignore'), 'a') as f:
+                f.write(mask + '\n')
+
+        actions = []
+        if parentAction:
+            actions.append(('..', parentAction))
+
+        def add_ignore_mask(mask):
+            actions.append((mask, lambda: append_ignore(mask)))
+
+        exts = os.path.basename(path).split('.')[1:]
+        while exts:
+            add_ignore_mask('.'.join(['*'] + exts))
+            exts = exts[1:]
+
+        index = len(actions)
+        add_ignore_mask(os.path.basename(path))
+
+        if path.startswith(self.path):
+            path = path[len(self.path):]
+
+        paths = path.lstrip(os.path.sep).split(os.path.sep)
+        while paths:
+            if os.path.isfile(os.path.join(self.path + os.path.sep.join(paths))):
+                add_ignore_mask(os.path.sep + os.path.sep.join(paths))
+                is_file = False
+            else:
+                add_ignore_mask(os.path.sep + os.path.sep.join(paths + ['*']))
+            paths = paths[:-1]
+
+        self.SelectItem([item[0] for item in actions],
+                        lambda i: actions[i][1](),
+                        selectedIndex=index)
+
