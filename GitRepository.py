@@ -10,9 +10,9 @@ from .st3_CommandsBase.WindowCommand import stWindowCommand
 class GitRepositoryCommand(stWindowCommand):
     def run(self):
         commands = [
-            ("REPOSITORY: Show all modifications", lambda: self.all_modifications(parentAction=self.run)),
-            ("REPOSITORY: Show log", self.log),
-            ("REPOSITORY: Commit changes", self.commit),
+            ("REPOSITORY: Show all modifications...", lambda: self.all_modifications(parentAction=self.run)),
+            ("REPOSITORY: Show log...", self.log),
+            ("REPOSITORY: Commit changes...", lambda: self.choose_commit_options(parentAction=self.run)),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -183,14 +183,39 @@ class GitRepositoryCommand(stWindowCommand):
             lambda i: actions[i][1](),
             selectedIndex=preselectedIndex)
 
-    def commit(self):
+    def choose_commit_options(self, parentAction):
+        actions = []
+        if parentAction:
+            actions.append(("..", parentAction))
+
+        actions.extend([
+            ("Commit indexed changes...", self.commit),
+            ("Amend last changes...", lambda: self.commit(amend=True)),
+        ])
+
+        self.SelectItem(
+            [a[0] for a in actions],
+            lambda i: actions[i][1](),
+            selectedIndex=1 if parentAction else 0)
+
+    def commit(self, amend=False):
         def make_commit(message):
             subprocess.Popen(
-                ["git", "commit", "-m", message],
+                ["git", "commit", "-m", message] + (["--amend"] if amend else []),
                 cwd=self.path)
+
+        msg = ''
+        if amend:
+            p = subprocess.Popen(
+                ['git', 'log', '--oneline', '-1', '--format=%B'],
+                stdout=subprocess.PIPE,
+                cwd=self.path)
+            out, err = p.communicate()
+            msg = out.decode("utf-8")
+
         self.window.show_input_panel(
             "Enter commit message:",
-            "",
+            msg,
             make_commit,
             None,
             None)
