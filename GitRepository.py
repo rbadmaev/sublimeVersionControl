@@ -10,9 +10,9 @@ from .st3_CommandsBase.WindowCommand import stWindowCommand
 class GitRepositoryCommand(stWindowCommand):
     def run(self):
         commands = [
-            ("REPOSITORY: Show all modifications...", lambda: self.all_modifications(parentAction=self.run)),
+            ("REPOSITORY: Show all modifications...", self.all_modifications),
             ("REPOSITORY: Show log...", self.log),
-            ("REPOSITORY: Commit changes...", lambda: self.choose_commit_options(parentAction=self.run)),
+            ("REPOSITORY: Commit changes...", self.choose_commit_options),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -30,8 +30,39 @@ class GitRepositoryCommand(stWindowCommand):
             if modified_file:
                 commands.extend(self.get_file_actions(modified_file[0][0], modified_file[0][1], parentAction=self.run))
 
-        items = [c[0] for c in commands]
-        self.SelectItem(items, lambda i: commands[i][1]())
+        self.ChooseAction(commands)
+
+    def ChooseAction(self, actions, selected="", parentAction=None, thisAction=None):
+        if not thisAction:
+            def _thisAction(selected, parentAction, thisAction):
+                self.ChooseAction(
+                    actions,
+                    selected=selected,
+                    parentAction=parentAction,
+                    thisAction=thisAction)
+
+            thisAction = _thisAction
+
+        selectedIndex = 0
+        if parentAction:
+            actions = [("..", parentAction)] + actions
+            selectedIndex = 1
+
+        if selected:
+            for i in range(len(actions)):
+                if actions[i][0] == selected:
+                    selectedIndex = i
+                    break
+
+        def onChoose(index):
+            action = actions[index]
+            action[1](
+                parentAction=lambda: thisAction(selected=action[0], parentAction=parentAction, thisAction=thisAction))
+
+        self.SelectItem(
+            [a[0] for a in actions],
+            onChoose,
+            selectedIndex=selectedIndex)
 
     def not_staged_diff(self, file_name=None):
         if not file_name:
@@ -41,7 +72,7 @@ class GitRepositoryCommand(stWindowCommand):
             ["git", "diff", file_name],
             cwd=self.path)
 
-    def staged_diff(self, file_name=None):
+    def staged_diff(self, file_name=None, parentAction=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
@@ -49,7 +80,7 @@ class GitRepositoryCommand(stWindowCommand):
             ["git", "diff", "--staged", file_name],
             cwd=self.path)
 
-    def add_to_index(self, file_name=None):
+    def add_to_index(self, file_name=None, parentAction=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
@@ -57,20 +88,20 @@ class GitRepositoryCommand(stWindowCommand):
             ["git", "add", file_name],
             cwd=self.path)
 
-    def remove_from_index(self, file_name):
+    def remove_from_index(self, file_name, parentAction=None):
         assert (file_name)
 
         subprocess.Popen(
             ["git", "reset", "HEAD", "--", file_name],
             cwd=self.path)
 
-    def remove_file(self, file_name):
+    def remove_file(self, file_name, parentAction=None):
         if not sublime.ok_cancel_dialog(
             "Do you really want to remove file '{}'?".format(file_name)):
             return
         os.remove(os.path.join(self.path, file_name))
 
-    def revert_file(self, file_name):
+    def revert_file(self, file_name, parentAction=None):
         if not sublime.ok_cancel_dialog(
             "Do you really want to revert all changes in '{}'".format(file_name)):
             return
@@ -220,7 +251,7 @@ class GitRepositoryCommand(stWindowCommand):
             None,
             None)
 
-    def log(self, preselectedIndex=0, path=None):
+    def log(self, preselectedIndex=0, path=None, parentAction=None):
         # subprocess.Popen(
         #     "gitk",
         #     cwd=self.path)
@@ -353,7 +384,7 @@ class GitRepositoryCommand(stWindowCommand):
             ],
             cwd=self.path)
 
-    def blame_file(self, path):
+    def blame_file(self, path, parentAction=None):
         p = subprocess.Popen(
             [
                 "git",
@@ -378,7 +409,7 @@ class GitRepositoryCommand(stWindowCommand):
                 sublime.LAYOUT_INLINE)
             row += 1
 
-    def hide_blame(self):
+    def hide_blame(self, parentAction=None):
         view = self.window.active_view()
         view.erase_phantoms ("git blame")
 
