@@ -14,6 +14,7 @@ class Action:
         self.text = text
         self.func = func
 
+
 def menu(refresh=False, temp=False):
     def _menu(getActions):
         def impl(self, *args, **kwargs):
@@ -26,12 +27,17 @@ def menu(refresh=False, temp=False):
 
     return _menu
 
-def action(func):
-    def impl(self, *args, **kwargs):
-        return self.action(
-            func=partial(func, self, *args, **kwargs))
 
-    return impl
+def action(terminate=False):
+    def _action(func):
+        def impl(self, *args, **kwargs):
+            return self.action(
+                func=partial(func, self, *args, **kwargs),
+                terminate=terminate)
+
+        return impl
+
+    return _action
 
 class Menu:
     def menu(self, getActions, refresh=False, temp=False):
@@ -85,10 +91,10 @@ class Menu:
 
         return impl
 
-    def action(self, func):
+    def action(self, func, terminate=False):
         def impl(parent, selectedId):
             func()
-            if parent:
+            if not terminate and parent:
                 parent()
 
         return impl
@@ -104,8 +110,13 @@ class TestMenuCommand(stWindowCommand, Menu):
             (prefix + "menu...", self.buildMenu(prefix=prefix+"menu/")),
             (prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called"))),
             (prefix + "test action", self.testAction()),
+            (prefix + "terminated action", self.terminatedAction()),
         ]
 
-    @action
+    @action()
     def testAction(self):
-        print("test actions runned")
+        print("test action runned")
+
+    @action(terminate=True)
+    def terminatedAction(self):
+        print("action runned and menu should not appears again")
