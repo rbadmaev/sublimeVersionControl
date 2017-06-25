@@ -18,7 +18,16 @@ class Action:
 class Menu:
     def menu(self, getActions, refresh=False, temp=False):
         def impl(parent, selectedId):
-            actions, defaultSelectedId = getActions()
+            actions = getActions()
+            defaultSelectedId = None
+            if isinstance(actions, tuple):
+                assert len(actions) == 2
+                actions, defaultSelectedId = actions[0], actions[1]
+
+            assert isinstance(actions, list)
+            assert not actions or isinstance(actions[0], (Action, tuple))
+            if actions and isinstance(actions[0], tuple):
+                actions = [Action(a[0], a[1]) for a in actions]
 
             selectedIndex = 0
             if parent:
@@ -72,8 +81,7 @@ class TestMenuCommand(stWindowCommand, Menu):
         self.menu(partial(self.buildMenu, ""))(parent=None, selectedId=None)
 
     def buildMenu(self, prefix):
-        return ([
-            Action(prefix + "menu...", self.menu(getActions=partial(self.buildMenu, prefix=prefix+"menu/"))),
-            Action(prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called")))
-        ], None)
-
+        return [
+            (prefix + "menu...", self.menu(getActions=partial(self.buildMenu, prefix=prefix+"menu/"))),
+            (prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called"))),
+        ]
