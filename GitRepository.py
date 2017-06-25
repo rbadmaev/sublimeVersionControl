@@ -2,19 +2,23 @@
 
 import os
 import subprocess
-from functools import partial
 
 import sublime
 
 from .st3_CommandsBase.WindowCommand import stWindowCommand
+from .menu import Menu, menu, action
 
 
-class GitRepositoryCommand(stWindowCommand):
+class GitRepositoryCommand(stWindowCommand, Menu):
     def run(self):
+        self.initialMenu()(None, None)
+
+    @menu(refresh=True)
+    def initialMenu(self):
         commands = [
-            ("REPOSITORY: Show all modifications...", self.all_modifications),
-            ("REPOSITORY: Show log...", self.log),
-            ("REPOSITORY: Commit changes...", self.choose_commit_options),
+            ("REPOSITORY: Show all modifications...", self.all_modifications()),
+            ("REPOSITORY: Show log...", self.log()),
+            ("REPOSITORY: Commit changes...", self.choose_commit_options()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -22,165 +26,111 @@ class GitRepositoryCommand(stWindowCommand):
                 len(os.path.abspath(self.path))+1:
             ]
             commands.extend([
-                ("FILE: Show log...", partial(self.log, path=active_file)),
-                ("FILE: Blame", partial(self.blame_file, path=active_file)),
-                ("FILE: Hide blame", self.hide_blame),
+                ("FILE: Show log...", self.log(path=active_file)),
+                ("FILE: Blame", self.blame_file(path=active_file)),
+                ("FILE: Hide blame", self.hide_blame()),
             ])
 
             modified_files = self.get_all_modified_files()
             modified_file = [f for f in modified_files if f[0] == active_file]
             if modified_file:
-                commands.extend(self.get_file_actions(modified_file[0][0], modified_file[0][1], parentAction=self.run))
+                commands.extend(self.get_file_actions(modified_file[0][0], modified_file[0][1]))
 
-        self.chooseAction(commands)
+        return commands
 
-    def chooseAction(self, actions, selected="", parentAction=None, thisAction=None):
-        if not thisAction:
-            def _thisAction(selected, parentAction, thisAction):
-                self.chooseAction(
-                    actions,
-                    selected=selected,
-                    parentAction=parentAction,
-                    thisAction=thisAction)
+    def git(self, args):
+        msg = ["git"] + args
+        print(" ".join(msg))
+        p = subprocess.Popen(
+            ["git"] + args,
+            stdout=subprocess.PIPE,
+            cwd=self.path)
+        out, err = p.communicate()
+        return out.decode("utf-8")
 
-            thisAction = _thisAction
-
-        selectedIndex = 0
-        if parentAction:
-            if not actions or isinstance(actions[0][0], str):
-                actions = [("..", parentAction)] + actions
-            else:
-                actions = [(["..", ""], parentAction)] + actions
-            selectedIndex = 1
-
-        if selected:
-            for i in range(len(actions)):
-                if actions[i][0] == selected:
-                    selectedIndex = i
-                    break
-
-        def onChoose(index):
-            action = actions[index]
-            thisParentAction = parentAction
-            def _returnToThis(parentAction):
-                thisAction(
-                    selected=action[0],
-                    parentAction=thisParentAction,
-                    thisAction=thisAction)
-            action[1](
-                parentAction=_returnToThis)
-
-        self.SelectItem(
-            [a[0] for a in actions],
-            onChoose,
-            selectedIndex=selectedIndex)
-
+    @action()
     def not_staged_diff(self, file_name=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
-        subprocess.Popen(
-            ["git", "diff", file_name],
-            cwd=self.path)
+        self.git(["diff", file_name])
 
-    def staged_diff(self, file_name=None, parentAction=None):
+    @action()
+    def staged_diff(self, file_name=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
-        subprocess.Popen(
-            ["git", "diff", "--staged", file_name],
-            cwd=self.path)
+        self.git(["diff", "--staged", file_name])
 
-    def add_to_index(self, file_name=None, parentAction=None):
+    @action()
+    def add_to_index(self, file_name=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
-        subprocess.Popen(
-            ["git", "add", file_name],
-            cwd=self.path)
+        self.git(["add", file_name])
 
-    def remove_from_index(self, file_name, parentAction=None):
+    @action()
+    def remove_from_index(self, file_name):
         assert (file_name)
 
-        subprocess.Popen(
-            ["git", "reset", "HEAD", "--", file_name],
-            cwd=self.path)
+        self.git(["reset", "HEAD", "--", file_name])
 
-    def remove_file(self, file_name, parentAction=None):
+    @action()
+    def remove_file(self, file_name):
         if not sublime.ok_cancel_dialog(
             "Do you really want to remove file '{}'?".format(file_name)):
             return
         os.remove(os.path.join(self.path, file_name))
 
-    def revert_file(self, file_name, parentAction=None):
+    @action()
+    def revert_file(self, file_name):
         if not sublime.ok_cancel_dialog(
             "Do you really want to revert all changes in '{}'".format(file_name)):
             return
 
-        subprocess.Popen(
-            ["git", "checkout", "--", file_name],
-            cwd=self.path)
+        self.git(["checkout", "--", file_name])
 
-    def get_file_actions(self, file_name, status, parentAction=None):
+    def get_file_actions(self, file_name, status):
         assert (len(status) == 2)
         actions = []
 
         if status[0] == "M":
             actions.append(
-                ("FILE: Diff staged for commit", partial(self.staged_diff, file_name=file_name)))
+                ("FILE: Diff staged for commit", self.staged_diff(file_name=file_name)))
 
         if status[1] != " ":
             actions.append(
-                ("FILE: Add to index", partial(self.add_to_index, file_name=file_name)))
+                ("FILE: Add to index", self.add_to_index(file_name=file_name)))
 
         if status[0] != " " and status[0] != "?":
             actions.append(
-                ("FILE: Remove from index", partial(self.remove_from_index, file_name=file_name)))
+                ("FILE: Remove from index", self.remove_from_index(file_name=file_name)))
 
         if status[1] == "M":
             actions.append(
-                ("FILE: Diff not staged changes", partial(self.not_staged_diff, file_name=file_name)))
+                ("FILE: Diff not staged changes", self.not_staged_diff(file_name=file_name)))
 
         if "D" not in status:
             actions.extend([
                 # ("FILE: Open file", lambda: self.open_file(file_name)),
-                ("FILE: Remove file", partial(self.remove_file, file_name=file_name)),
+                ("FILE: Remove file", self.remove_file(file_name=file_name)),
             ])
 
         if status != "  ":
             actions.append(
-                ("FILE: Revert changes", partial(self.revert_file, file_name=file_name)))
+                ("FILE: Revert changes", self.revert_file(file_name=file_name)))
 
         actions.append(
-            ("FILE: Add to ignore", partial(self.add_to_gitignore, file_name=file_name)))
+            ("FILE: Add to ignore", self.add_to_gitignore(file_name=file_name)))
 
         return actions
 
-    def choose_file_action(self, file_name, status, parentAction=None):
-        actions = []
-        if parentAction:
-            actions.append(("..", parentAction))
-
-        actions.extend(self.get_file_actions(file_name, status, parentAction=parentAction))
-        items = [a[0] for a in actions]
-
-        def run(i):
-            actions[i][1]()
-            if parentAction:
-                parentAction()
-
-        self.SelectItem(
-            items,
-            run,
-            selectedIndex=1 if parentAction else 0)
+    @menu(refresh=True, temp=True)
+    def choose_file_action(self, file_name, status):
+        return self.get_file_actions(file_name, status)
 
     def get_all_modified_files(self):
-        p = subprocess.Popen(
-            ["git", "status", '--short'],
-            stdout=subprocess.PIPE,
-            cwd=self.path)
-        out, err = p.communicate()
-        files = out.decode("utf-8").splitlines()
+        files = self.git(['status', '--short']).splitlines()
         files = [[f[3:], f[:2]] for f in files]
         return files
 
@@ -201,61 +151,30 @@ class GitRepositoryCommand(stWindowCommand):
             "[-] " if status == "D " else \
             status
 
-    def all_modifications(self, preselected=None, parentAction=None):
-        actions = []
-        preselectedIndex = 0
-        if parentAction:
-            actions.append(("..", parentAction))
-            preselectedIndex += 1
-
-        files = self.get_all_modified_files()
-        for f in files:
-            if f[0] == preselected:
-                preselectedIndex = len(actions)
-
-            actions.append((
+    @menu(refresh=True)
+    def all_modifications(self):
+        return [
+            (
                 self.get_status_str(f[1]) + '\t' + f[0],
-                partial(
-                    self.choose_file_action,
-                    file_name=f[0],
-                    status=f[1]#,
-                    # parentAction=partial(self.all_modifications, preselected=f[0])
-                    )))
+                self.choose_file_action(file_name=f[0], status=f[1])
+            ) for f in self.get_all_modified_files()
+        ]
 
-        self.SelectItem(
-            [a[0] for a in actions],
-            lambda i: actions[i][1](parentAction=parentAction),
-            selectedIndex=preselectedIndex)
+    @menu()
+    def choose_commit_options(self):
+        return [
+            ("Commit indexed changes...", self.commit()),
+            ("Amend last changes...", self.commit(amend=True)),
+        ]
 
-    def choose_commit_options(self, parentAction):
-        actions = []
-        if parentAction:
-            actions.append(("..", parentAction))
-
-        actions.extend([
-            ("Commit indexed changes...", self.commit),
-            ("Amend last changes...", partial(self.commit, amend=True)),
-        ])
-
-        self.SelectItem(
-            [a[0] for a in actions],
-            lambda i: actions[i][1](),
-            selectedIndex=1 if parentAction else 0)
-
+    @action(terminate=True)
     def commit(self, amend=False):
         def make_commit(message):
-            subprocess.Popen(
-                ["git", "commit", "-m", message] + (["--amend"] if amend else []),
-                cwd=self.path)
+            self.git(["commit", "-m", message] + (['--amend'] if amend else []))
 
         msg = ''
         if amend:
-            p = subprocess.Popen(
-                ['git', 'log', '--oneline', '-1', '--format=%B'],
-                stdout=subprocess.PIPE,
-                cwd=self.path)
-            out, err = p.communicate()
-            msg = out.decode("utf-8")
+            msg = self.git(['log', '--oneline', '-1', '--format=%B'])
 
         self.window.show_input_panel(
             "Enter commit message:",
@@ -264,11 +183,8 @@ class GitRepositoryCommand(stWindowCommand):
             None,
             None)
 
-    def log(self, path=None, parentAction=None):
-        # subprocess.Popen(
-        #     "gitk",
-        #     cwd=self.path)
-
+    @menu()
+    def log(self, path=None):
         TAG = 0
         TITLE = 1
         AUTHOR = 2
@@ -276,7 +192,6 @@ class GitRepositoryCommand(stWindowCommand):
         DATE = 4
 
         cmd = [
-            "git",
             "log",
             "--date-order",
             '--oneline',
@@ -285,30 +200,20 @@ class GitRepositoryCommand(stWindowCommand):
         if path:
             cmd = cmd + ['--', path]
 
-        p = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            cwd=self.path)
-        out, err = p.communicate()
-        commits = [c.split("!SEP!") for c in out.decode("utf-8").splitlines()]
+        commits = [c.split("!SEP!") for c in self.git(cmd).splitlines()]
 
-        actions = []
-        for c in commits:
-            actions.append((
-                [   c[TITLE].replace('-', ' ') + '\t' + c[HASH],
-                    (c[TAG] + " " if c[TAG] else "") + c[AUTHOR] + " " + c[DATE],],
-                partial(self.show_commit, commit=c[HASH])))
+        return [
+            (
+                [
+                    c[TITLE].replace('-', ' ') + '\t' + c[HASH],
+                    (c[TAG] + " " if c[TAG] else "") + c[AUTHOR] + " " + c[DATE],
+                ],
+                self.show_commit(commit=c[HASH]),
+            ) for c in commits
+        ]
 
-        self.chooseAction(actions, parentAction=parentAction)
-        # self.SelectItem(
-        #     views,
-        #     lambda i: self.show_commit(
-        #         commits[i][HASH],
-        #         parentAction=lambda: self.log(i, path)),
-        #     Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
-        #     selectedIndex=preselectedIndex)
-
-    def show_commit(self, commit, parentAction=None, preselectedIndex=1):
+    @menu()
+    def show_commit(self, commit):
         p = subprocess.Popen(
             [
                 "git",
@@ -320,85 +225,35 @@ class GitRepositoryCommand(stWindowCommand):
             stdout=subprocess.PIPE,
             cwd=self.path)
 
-        out, err = p.communicate()
-        files = [f.split('\t') for f in out.decode("utf-8").splitlines()]
-        views = [self.get_status_str(f[0]) + '\t' + f[1] for f in files]
-        if parentAction:
-            files = [('..', '')]  + files
-            views = ['..'] + views
+        out = self.git(['show', '--name-status', '--format=', commit])
+        files = [f.split('\t') for f in out.splitlines()]
+        return [
+            (
+                self.get_status_str(f[0]) + '\t' + f[1],
+                self.choose_file_in_commit_action(commit=commit, file_name=f[1], status=f[0])
+            ) for f in files
+        ]
 
-        def run(i):
-            if parentAction and i==0:
-                parentAction()
-                return
-
-            continuation = lambda: self.show_commit(
-                commit=commit,
-                parentAction=parentAction,
-                preselectedIndex=i)
-
-            self.choose_file_in_commit_action(
-                commit=commit,
-                file_name=files[i][1],
-                status=files[i][0],
-                continuation=continuation,
-                parentAction=continuation)
-
-        self.SelectItem(
-            views,
-            run,
-            Flags = sublime.KEEP_OPEN_ON_FOCUS_LOST,
-            selectedIndex=preselectedIndex)
-
-    def get_file_in_commit_actions(self, commit, file_name, status):
+    @menu(temp=True)
+    def choose_file_in_commit_action(self, commit, file_name, status):
         while len(status) < 2:
             status += ' '
         actions = [
-            ("FILE: Diff", partial(self.diff_for_file_in_commit, commit=commit, file=file_name))]
+            ("FILE: Diff", self.diff_for_file_in_commit(commit=commit, file=file_name))]
 
         return actions
 
-    def choose_file_in_commit_action(self, commit, file_name, status, continuation=lambda: None, parentAction=None):
-        actions = self.get_file_in_commit_actions(commit, file_name, status)
-        if parentAction:
-            actions = [('..', parentAction)] + actions
-
-        items = [a[0] for a in actions]
-
-        def run(i):
-            actions[i][1]()
-            continuation()
-
-        self.SelectItem(items, run, selectedIndex=1)
-
+    @action()
     def diff_for_file_in_commit(self, commit, file):
-        subprocess.Popen(
-            [
-                "git",
-                "diff",
-                commit+"^!",
-                '--',
-                file
-            ],
-            cwd=self.path)
+        self.git(["diff", commit+"^!", '--', file])
 
-    def blame_file(self, path, parentAction=None):
-        p = subprocess.Popen(
-            [
-                "git",
-                "blame",
-                path
-            ],
-            stdout=subprocess.PIPE,
-            cwd=self.path)
-
-        out, err = p.communicate()
-
+    @action(terminate=True)
+    def blame_file(self, path):
         view = self.window.active_view()
         view.erase_phantoms ("git blame")
         phantoms = []
         row = 0
-        for line in out.decode("utf-8").splitlines():
+        for line in self.git(['blame', path]).splitlines():
             pos = view.text_point(row, 0)
             view.add_phantom (
                 "git blame",
@@ -407,30 +262,30 @@ class GitRepositoryCommand(stWindowCommand):
                 sublime.LAYOUT_INLINE)
             row += 1
 
-    def hide_blame(self, parentAction=None):
+    @action(terminate=True)
+    def hide_blame(self):
         view = self.window.active_view()
         view.erase_phantoms ("git blame")
 
-    def add_to_gitignore(self, path, parentAction=None):
+    @action()
+    def append_ignore(self, mask):
+        with open(os.path.join(self.path, '.gitignore'), 'a') as f:
+            f.write(mask + '\n')
+
+    @menu(temp=True)
+    def add_to_gitignore(self, path):
         path = os.path.normpath(path)
-        def append_ignore(mask):
-            with open(os.path.join(self.path, '.gitignore'), 'a') as f:
-                f.write(mask + '\n')
-
         actions = []
-        if parentAction:
-            actions.append(('..', parentAction))
-
         def add_ignore_mask(mask):
-            actions.append((mask, lambda: append_ignore(mask)))
+            actions.append((mask, self.append_ignore(mask)))
 
         exts = os.path.basename(path).split('.')[1:]
         while exts:
             add_ignore_mask('.'.join(['*'] + exts))
             exts = exts[1:]
 
-        index = len(actions)
-        add_ignore_mask(os.path.basename(path))
+        selected = os.path.basename(path)
+        add_ignore_mask(selected)
 
         if path.startswith(self.path):
             path = path[len(self.path):]
@@ -444,7 +299,5 @@ class GitRepositoryCommand(stWindowCommand):
                 add_ignore_mask(os.path.sep + os.path.sep.join(paths + ['*']))
             paths = paths[:-1]
 
-        self.SelectItem([item[0] for item in actions],
-                        lambda i: actions[i][1](),
-                        selectedIndex=index)
+        return actions, selected
 
