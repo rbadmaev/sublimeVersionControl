@@ -108,9 +108,18 @@ class TestMenuCommand(stWindowCommand, Menu):
     def buildMenu(self, prefix):
         return [
             (prefix + "menu...", self.buildMenu(prefix=prefix+"menu/")),
+            (prefix + "temporary menu", self.temporaryMenu()),
             (prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called"))),
             (prefix + "test action", self.testAction()),
             (prefix + "terminated action", self.terminatedAction()),
+        ]
+
+    @menu(temp=True)
+    def temporaryMenu(self):
+        return [
+            ("usual menu", self.buildMenu(prefix="temp/")),
+            ("print", self.testAction()),
+            ("print and terminate", self.terminatedAction),
         ]
 
     @action()
