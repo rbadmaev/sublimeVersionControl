@@ -14,12 +14,17 @@ class Action:
         self.text = text
         self.func = func
 
-def menu(getActions):
-    def impl(self, *args, **kwargs):
-        return self.menu(
-            getActions=partial(getActions, self, *args, **kwargs))
+def menu(refresh=False, temp=False):
+    def _menu(getActions):
+        def impl(self, *args, **kwargs):
+            return self.menu(
+                getActions=partial(getActions, self, *args, **kwargs),
+                refresh=refresh,
+                temp=temp)
 
-    return impl
+        return impl
+
+    return _menu
 
 class Menu:
     def menu(self, getActions, refresh=False, temp=False):
@@ -86,7 +91,7 @@ class TestMenuCommand(stWindowCommand, Menu):
     def run(self):
         self.buildMenu(prefix="")(parent=None, selectedId=None)
 
-    @menu
+    @menu()
     def buildMenu(self, prefix):
         return [
             (prefix + "menu...", self.buildMenu(prefix=prefix+"menu/")),
