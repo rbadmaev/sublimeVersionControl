@@ -38,29 +38,31 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return commands
 
-    def git(self, args):
+    def git(self, args, wait=True):
         msg = ["git"] + args
         print(" ".join(msg))
         p = subprocess.Popen(
             ["git"] + args,
             stdout=subprocess.PIPE,
             cwd=self.path)
-        out, err = p.communicate()
-        return out.decode("utf-8")
+
+        if wait:
+            out, err = p.communicate()
+            return out.decode("utf-8")
 
     @action()
     def not_staged_diff(self, file_name=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
-        self.git(["diff", file_name])
+        self.git(["diff", file_name], wait=False)
 
     @action()
     def staged_diff(self, file_name=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
-        self.git(["diff", "--staged", file_name])
+        self.git(["diff", "--staged", file_name], wait=False)
 
     @action()
     def add_to_index(self, file_name=None):
@@ -245,7 +247,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action()
     def diff_for_file_in_commit(self, commit, file):
-        self.git(["diff", commit+"^!", '--', file])
+        self.git(["diff", commit+"^!", '--', file], wait=False)
 
     @action(terminate=True)
     def blame_file(self, path):
