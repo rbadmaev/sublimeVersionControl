@@ -131,7 +131,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     def get_all_modified_files(self):
         files = self.git(['status', '--short']).splitlines()
-        files = [[f[3:], f[:2]] for f in files]
+        files = [[f[3:].strip('"'), f[:2]] for f in files]
         return files
 
     @staticmethod
