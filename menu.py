@@ -26,6 +26,13 @@ def menu(refresh=False, temp=False):
 
     return _menu
 
+def action(func):
+    def impl(self, *args, **kwargs):
+        return self.action(
+            func=partial(func, self, *args, **kwargs))
+
+    return impl
+
 class Menu:
     def menu(self, getActions, refresh=False, temp=False):
         def impl(parent, selectedId):
@@ -96,4 +103,9 @@ class TestMenuCommand(stWindowCommand, Menu):
         return [
             (prefix + "menu...", self.buildMenu(prefix=prefix+"menu/")),
             (prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called"))),
+            (prefix + "test action", self.testAction()),
         ]
+
+    @action
+    def testAction(self):
+        print("test actions runned")
