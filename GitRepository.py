@@ -51,18 +51,14 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             return out.decode("utf-8")
 
     @action()
-    def not_staged_diff(self, file_name=None):
+    def diff(self, staged, file_name=None):
         if not file_name:
             file_name = self.window.active_view().file_name()
 
-        self.git(["diff", file_name], wait=False)
-
-    @action()
-    def staged_diff(self, file_name=None):
-        if not file_name:
-            file_name = self.window.active_view().file_name()
-
-        self.git(["diff", "--staged", file_name], wait=False)
+        if staged:
+            self.git(["diff", "--staged", file_name], wait=False)
+        else:
+            self.git(["diff", file_name], wait=False)
 
     @action()
     def add_to_index(self, file_name=None):
@@ -98,7 +94,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         if status[0] == "M":
             actions.append(
-                ("FILE: Diff staged for commit", self.staged_diff(file_name=file_name)))
+                ("FILE: Diff staged for commit", self.diff(staged=True, file_name=file_name)))
 
         if status[1] != " ":
             actions.append(
@@ -110,7 +106,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         if status[1] == "M":
             actions.append(
-                ("FILE: Diff not staged changes", self.not_staged_diff(file_name=file_name)))
+                ("FILE: Diff not staged changes", self.diff(staged=False, file_name=file_name)))
 
         if "D" not in status:
             actions.extend([
