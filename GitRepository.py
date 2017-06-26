@@ -226,6 +226,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
         return [
+            ("Copy message to clipboard", self.copy_commit_message(commit=commit))
+        ] + [
             (
                 self.get_status_str(f[0]) + '\t' + f[1],
                 self.choose_file_in_commit_action(commit=commit, file_name=f[1], status=f[0])
@@ -244,6 +246,15 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @action()
     def diff_for_file_in_commit(self, commit, file):
         self.git(["diff", commit+"^!", '--', file], wait=False)
+
+    @action()
+    def copy_commit_message(self, commit):
+        sublime.set_clipboard(
+            self.git([
+                'show',
+                '--pretty=format:%H%n%aD%n%an%n%n%s%n%n%b',
+                '--name-status',
+                commit]))
 
     @action(terminate=True)
     def blame_file(self, path):
