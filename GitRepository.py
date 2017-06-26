@@ -247,7 +247,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def diff_for_file_in_commit(self, commit, file):
         self.git(["diff", commit+"^!", '--', file], wait=False)
 
-    @action()
+    @action(terminate=True)
     def copy_commit_message(self, commit):
         sublime.set_clipboard(
             self.git([
