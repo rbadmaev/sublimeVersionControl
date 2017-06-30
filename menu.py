@@ -9,13 +9,12 @@ from .st3_CommandsBase.WindowCommand import stWindowCommand
 
 class Action:
     def __init__(self, text, func, id=None):
-        super(Action, self).__init__()
         self.id = id if id else text
         self.text = text
         self.func = func
 
 
-def menu(refresh=False, temp=False):
+def  menu(refresh=False, temp=False):
     def _menu(getActions):
         def impl(self, *args, **kwargs):
             return self.menu(
@@ -49,7 +48,6 @@ class Menu:
                 actions, defaultSelectedId = actions[0], actions[1]
 
             assert isinstance(actions, list)
-            assert not actions or isinstance(actions[0], (Action, tuple))
             if actions and isinstance(actions[0], tuple):
                 actions = [Action(a[0], a[1]) for a in actions]
 
@@ -81,7 +79,6 @@ class Menu:
                         partial(impl, parent=parent, selectedId=action.id))
 
                     action.func(parent=thisMenu, selectedId=None)
-
                 self.SelectItem(
                     [a.text for a in actions],
                     onSelect,

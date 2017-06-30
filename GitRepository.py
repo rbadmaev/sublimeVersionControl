@@ -7,6 +7,7 @@ import sublime
 
 from .st3_CommandsBase.WindowCommand import stWindowCommand
 from .menu import Menu, menu, action
+from .menu import Action as MenuAction
 
 
 class GitRepositoryCommand(stWindowCommand, Menu):
@@ -152,9 +153,10 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @menu(refresh=True)
     def all_modifications(self):
         return [
-            (
-                self.get_status_str(f[1]) + '\t' + f[0],
-                self.choose_file_action(file_name=f[0], status=f[1])
+            MenuAction (
+                text=self.get_status_str(f[1]) + '\t' + f[0],
+                func=self.choose_file_action(file_name=f[0], status=f[1]),
+                id=f[0]
             ) for f in self.get_all_modified_files()
         ]
 
