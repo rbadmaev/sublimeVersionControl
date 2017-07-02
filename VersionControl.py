@@ -3,8 +3,9 @@ from glob import glob
 from .st3_CommandsBase.WindowCommand import stWindowCommand
 # from .SvnRepository import SvnRepositoryCommand
 from .GitRepository import GitRepositoryCommand
+from .menu import Menu, menu
 
-class VersionControlCommand(stWindowCommand):
+class VersionControlCommand(stWindowCommand, Menu):
 
     def _DetermineVersionControlSystem(Self):
         repositories = []
@@ -29,7 +30,7 @@ class VersionControlCommand(stWindowCommand):
         repositories = Self._DetermineVersionControlSystem()
 
         if len(repositories) == 0:
-            sublime.error_message("Repository not found")
+            Self.create_repository()(None, None)
             return
 
         if len(repositories) == 1:
@@ -39,3 +40,30 @@ class VersionControlCommand(stWindowCommand):
         Self.SelectItem(
             [v.Name() + ": " + v.RepositoryPath for v in repositories],
             lambda index: repositories[index].run())
+
+    @menu()
+    def create_repository(self):
+        if not self.window.active_view().file_name():
+            return []
+
+        return [
+            (
+                'Create GIT repository...',
+                self.chooseRepositoryPath(GitRepositoryCommand)
+            ),
+        ]
+
+    @menu()
+    def chooseRepositoryPath(self, repository):
+        path = os.path.dirname(self.window.active_view().file_name())
+        paths = [path]
+        while path != os.path.dirname(path):
+            path = os.path.dirname(path)
+            paths.append(path)
+
+        return [
+            (
+                path,
+                repository(self.window).createRepository(path)
+            ) for path in paths
+        ]

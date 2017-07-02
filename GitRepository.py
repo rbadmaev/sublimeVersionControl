@@ -11,6 +11,13 @@ from .menu import Action as MenuAction
 
 
 class GitRepositoryCommand(stWindowCommand, Menu):
+    @action()
+    def createRepository(self, path):
+        assert os.path.isdir(path)
+        self.path = path
+        self.git(['init'])
+        self.run()
+
     def run(self):
         self.initialMenu()(None, None)
 
