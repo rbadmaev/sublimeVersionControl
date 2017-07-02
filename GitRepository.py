@@ -264,12 +264,12 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action(terminate=True)
     def copy_commit_message(self, commit):
-        sublime.set_clipboard(
+        sublime.set_clipboard('  \n'.join(
             self.git([
                 'show',
                 '--pretty=format:%H%n%aD%n%an%n%n%s%n%n%b',
                 '--name-status',
-                commit]))
+                commit]).splitlines()))
 
     @action(terminate=True)
     def blame_file(self, path):
