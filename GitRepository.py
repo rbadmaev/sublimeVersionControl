@@ -126,10 +126,16 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             actions.append(
                 ("FILE: Revert changes", self.revert_file(file_name=file_name)))
 
-        actions.append(
-            ("FILE: Add to ignore", self.add_to_gitignore(file_name=file_name)))
+        actions.extend([
+            ("FILE: Add to ignore", self.add_to_gitignore(file_name=file_name)),
+            ("FILE: Open", self.open_file(path=file_name))
+        ])
 
         return actions
+
+    @action(terminate=True)
+    def open_file(self, path):
+        self.window.open_file(path)
 
     @menu(refresh=True, temp=True)
     def choose_file_action(self, file_name, status):
