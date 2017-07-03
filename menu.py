@@ -109,6 +109,7 @@ class TestMenuCommand(stWindowCommand, Menu):
             (prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called"))),
             (prefix + "test action", self.testAction()),
             (prefix + "terminated action", self.terminatedAction()),
+            (prefix + "static menu..", self.staticMenu()),
         ]
 
     @menu(temp=True)
@@ -126,3 +127,22 @@ class TestMenuCommand(stWindowCommand, Menu):
     @action(terminate=True)
     def terminatedAction(self):
         print("action runned and menu should not appears again")
+
+    @menu()
+    def staticMenu(self):
+        return [
+            ('submenu 1', self.menu(lambda: [
+                ('submemu 1/item 1', self.action(partial(sublime.message_dialog, 'submemu 1/item 1'))),
+                ('submenu 1/item 2', self.action(partial(sublime.message_dialog, 'submemu 1/item 2'))),
+                ])
+            ),
+            ('submenu 2', self.menu(lambda: [
+                ('submemu 2/one more submenu', self.menu(lambda:[
+                    ('make some action', self.action(partial(sublime.message_dialog, 'some action'))),
+                    ('make another action', self.action(partial(sublime.message_dialog, 'another action'))),
+                    ])
+                ),
+                ('submenu 2/item 2', self.action(partial(sublime.message_dialog, 'submemu 2/item 2'))),
+                ])
+            ),
+        ]
