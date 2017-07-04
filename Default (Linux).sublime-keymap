@@ -9,6 +9,7 @@
   //       }
   //   },
     { "keys": ["f9"], "command": "version_control" },
+    { "keys": ["alt+f9"], "command": "test_menu" },
 ]
 
 
