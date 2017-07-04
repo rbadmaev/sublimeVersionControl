@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import re
 
 import sublime
 
@@ -185,6 +186,31 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         def make_commit(message):
             self.git(["commit", "-m", message] + (['--amend'] if amend else []))
 
+        bugtraqMsg = self.git(['config', 'bugtraq.message'])
+        def request_bug_id(message):
+            if not bugtraqMsg:
+                make_commit(message)
+                return
+
+            bugInfo = re.search(bugtraqMsg.replace('%BUGID%', '\d+'), message)
+            if bugInfo:
+                make_commit(message)
+                return
+
+            def on_bug_id_entered(bugId):
+                if bugId:
+                    nonlocal message
+                    message += "\n\n" + bugtraqMsg.replace("%BUGID%", bugId)
+
+                make_commit(message)
+
+            self.window.show_input_panel(
+                "Enter bug id:",
+                "",
+                on_bug_id_entered,
+                None,
+                None)
+
         msg = ''
         if amend:
             msg = self.git(['log', '--oneline', '-1', '--format=%B'])
@@ -192,7 +218,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         self.window.show_input_panel(
             "Enter commit message:",
             msg,
-            make_commit,
+            request_bug_id,
             None,
             None)
 
