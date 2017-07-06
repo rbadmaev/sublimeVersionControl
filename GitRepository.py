@@ -50,8 +50,16 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return commands
 
-    def git(self, args, wait=True):
+    def git(self, args, wait=True, silent=True):
+        show_result = not silent
+        assert wait or not show_result
         msg = ["git"] + args
+        if not silent:
+            if not sublime.ok_cancel_dialog(
+                "Do you really want to run following command:\n" +
+                " ".join(msg)):
+                return None
+
         print(" ".join(msg))
         p = subprocess.Popen(
             ["git"] + args,
@@ -61,9 +69,12 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         if wait:
             out, err = p.communicate()
+            out = out.decode("utf-8")
             if err:
                 sublime.message_dialog(err.decode("utf-8"))
-            return out.decode("utf-8")
+            if show_result and out:
+                sublime.message_dialog(out)
+            return out
 
     @action()
     def diff(self, staged, file_name=None):
@@ -293,7 +304,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action()
     def reset_to_commit(self, commit, mode=''):
-        self.run_git_command(['reset', mode, commit])
+        self.git(['reset', mode, commit], silent=False)
 
     @menu(temp=True)
     def choose_file_in_commit_action(self, commit, file_name, status):
@@ -385,14 +396,17 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action(terminate=True)
     def merge(self, commit):
-        self.run_git_command(['merge', commit])
+        self.git(['merge', commit], silent=False)
 
     @action()
     def create_branch(self, commit=""):
         def impl(branch_name):
-            self.run_git_command([
-                'branch',
-                branch_name] + ([commit] if commit else []))
+            self.git(
+                [
+                    'branch',
+                    branch_name
+                ] + ([commit] if commit else []),
+                silent=False)
 
         self.window.show_input_panel(
             "Enter new branch name:",
@@ -422,17 +436,12 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @action(terminate=True)
     def checkout(self, commit):
         assert commit
-        self.run_git_command(['checkout', commit])
+        self.git(['checkout', commit], silent=False)
 
     @action(terminate=True)
     def delete_branch(self, branch):
         assert branch
-        self.run_git_command(['branch', '-d', branch])
-
-    def run_git_command(self, params):
-        result = self.git(params)
-        if result:
-            sublime.message_dialog(result)
+        self.git(['branch', '-d', branch], silent=False)
 
     # @memu(refresh=True)
     # def show_branches(self):
