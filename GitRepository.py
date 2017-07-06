@@ -29,6 +29,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Show log...", self.log()),
             ("REPOSITORY: Commit changes...", self.choose_commit_options()),
             ("REPOSITORY: Merge...", self.choose_head_for_merge()),
+            ("REPOSITORY: Create branch from last commit...", self.create_branch()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -384,3 +385,18 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         result = self.git(['merge', commit])
         if result:
             sublime.message_dialog(result)
+
+    @action()
+    def create_branch(self, commit=""):
+        def impl(branch_name):
+            result = self.git(['branch', branch_name] + ([commit] if commit else []))
+            if result:
+                sublime.message_dialog(result)
+
+
+        self.window.show_input_panel(
+            "Enter new branch name:",
+            "",
+            impl,
+            None,
+            None)
