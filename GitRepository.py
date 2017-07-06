@@ -56,10 +56,13 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         p = subprocess.Popen(
             ["git"] + args,
             stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             cwd=self.path)
 
         if wait:
             out, err = p.communicate()
+            if err:
+                sublime.message_dialog(err.decode("utf-8"))
             return out.decode("utf-8")
 
     @action()
