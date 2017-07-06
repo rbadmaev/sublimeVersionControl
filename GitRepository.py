@@ -28,6 +28,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Show all modifications...", self.all_modifications()),
             ("REPOSITORY: Show log...", self.log()),
             ("REPOSITORY: Commit changes...", self.choose_commit_options()),
+            ("REPOSITORY: Merge...", self.choose_head_for_merge()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -366,3 +367,20 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return actions, selected
 
+    @menu(temp=True)
+    def choose_head_for_merge(self):
+        branches = [b.strip() for b in self.git(['branch']).splitlines() if b[0] != '*']
+        tags = self.git(['tag']).splitlines()
+        return [
+            ("Branch " + b, self.merge(commit=b))
+            for b in branches
+        ] + [
+            ("Tag " + t, self.merge(commit=t))
+            for t in tags
+        ]
+
+    @action(terminate=True)
+    def merge(self, commit):
+        result = self.git(['merge', commit])
+        if result:
+            sublime.message_dialog(result)
