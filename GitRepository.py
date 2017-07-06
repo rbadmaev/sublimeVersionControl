@@ -258,8 +258,11 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def show_commit(self, commit):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
-        return [
-            ("Checkout to this...", self.checkout(commit=commit)),
+        tags = self.git(['log', commit, '--format=%d']).strip("()\n \t")
+        tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
+        return ([
+            ("Checkout ...", self.choose_checkout_tag(tags=tags)),
+        ] if tags else []) + [
             ("Create branch from this", self.create_branch(commit=commit)),
             ("Reset to this...", self.choose_reset_options(commit=commit)),
             ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
@@ -269,6 +272,13 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 self.choose_file_in_commit_action(commit=commit, file_name=f[1], status=f[0])
             ) for f in files
         ], "Copy message to clipboard"
+
+    @menu()
+    def choose_checkout_tag(self, tags):
+        return [
+            (t, self.checkout(commit=t))
+            for t in tags
+        ]
 
     @menu(temp=True)
     def choose_reset_options(self, commit):
