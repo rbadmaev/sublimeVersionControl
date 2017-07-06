@@ -267,13 +267,28 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
         return [
-            ("Copy message to clipboard", self.copy_commit_message(commit=commit))
+            ("Reset to this...", self.choose_reset_options(commit=commit)),
+            ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
         ] + [
             (
                 self.get_status_str(f[0]) + '\t' + f[1],
                 self.choose_file_in_commit_action(commit=commit, file_name=f[1], status=f[0])
             ) for f in files
+        ], "Copy message to clipboard"
+
+    @menu(temp=True)
+    def choose_reset_options(self, commit):
+        return [
+            ('Soft reset', self.reset_to_commit(commit=commit, mode='--soft')),
+            ('Mixed reset', self.reset_to_commit(commit=commit, mode='')),
+            ('Hard reset', self.reset_to_commit(commit=commit, mode='--hard')),
         ]
+
+    @action()
+    def reset_to_commit(self, commit, mode=''):
+        result = self.git(['reset', mode, commit])
+        if result:
+            sublime.message_dialog(result)
 
     @menu(temp=True)
     def choose_file_in_commit_action(self, commit, file_name, status):
