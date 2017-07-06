@@ -30,6 +30,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Commit changes...", self.choose_commit_options()),
             ("REPOSITORY: Merge...", self.choose_head_for_merge()),
             ("REPOSITORY: Create branch from last commit...", self.create_branch()),
+            ("REPOSITORY: Show branches...", self.show_branches()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -269,6 +270,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
         return [
+            ("Checkout to this...", self.checkout(commit=commit)),
+            ("Create branch from this", self.create_branch(commit=commit)),
             ("Reset to this...", self.choose_reset_options(commit=commit)),
             ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
         ] + [
@@ -288,9 +291,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action()
     def reset_to_commit(self, commit, mode=''):
-        result = self.git(['reset', mode, commit])
-        if result:
-            sublime.message_dialog(result)
+        self.run_git_command(['reset', mode, commit])
 
     @menu(temp=True)
     def choose_file_in_commit_action(self, commit, file_name, status):
@@ -382,17 +383,14 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action(terminate=True)
     def merge(self, commit):
-        result = self.git(['merge', commit])
-        if result:
-            sublime.message_dialog(result)
+        self.run_git_command(['merge', commit])
 
     @action()
     def create_branch(self, commit=""):
         def impl(branch_name):
-            result = self.git(['branch', branch_name] + ([commit] if commit else []))
-            if result:
-                sublime.message_dialog(result)
-
+            self.run_git_command([
+                'branch',
+                branch_name] + ([commit] if commit else []))
 
         self.window.show_input_panel(
             "Enter new branch name:",
@@ -400,3 +398,53 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             impl,
             None,
             None)
+
+    @menu(refresh=True)
+    def show_branches(self):
+        return [
+            (b, self.show_branch(b)) for b in self.git(['branch']).splitlines()
+        ]
+
+    @menu(refresh=True)
+    def show_branch(self, branch):
+        active_branch = (branch[0] == '*')
+        branch = branch.strip()
+
+        return [
+            ("Merge " + branch, self.merge(commit=branch)),
+            ("Checkout " + branch, self.checkout(commit=branch)),
+            ("Delete " + branch, self.delete_branch(commit=branch))
+        ] if not active_branch else [
+        ]
+
+    @action(terminate=True)
+    def checkout(self, commit):
+        assert commit
+        self.run_git_command(['checkout', commit])
+
+    @action(terminate=True)
+    def delete_branch(self, branch):
+        assert branch
+        self.run_git_command(['branch', '-d', branch])
+
+    def run_git_command(self, params):
+        result = self.git(params)
+        if result:
+            sublime.message_dialog(result)
+
+    # @memu(refresh=True)
+    # def show_branches(self):
+    #     return [
+    #         (b, self.show_branch(b)) for b in self.git(['branch']).splitlines()
+    #     ]
+
+    # @menu(refresh=True)
+    # def show_branch(self, branch):
+    #     active_branch = (branch[0] == '*')
+    #     branch = branch.strip()
+
+    #     return [
+    #         ("Merge " + branch, self.merge(commit=branch)),
+    #         ("Checkout " + branch, self.checkout(commit=branch))
+    #     ] if not active_branch else [
+    #     ]
