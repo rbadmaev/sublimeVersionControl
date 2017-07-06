@@ -256,17 +256,6 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @menu()
     def show_commit(self, commit):
-        p = subprocess.Popen(
-            [
-                "git",
-                "show",
-                "--name-status",
-                '--format=',
-                commit
-            ],
-            stdout=subprocess.PIPE,
-            cwd=self.path)
-
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
         return [
