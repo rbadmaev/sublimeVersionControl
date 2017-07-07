@@ -394,7 +394,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @menu()
     def show_tags_and_branches(self):
-        branches = self.git(['branch']).splitlines()
+        branches = self.git(['branch', '--all']).splitlines()
         tags = self.git(['tag']).splitlines()
         return [
             ("Branch " + b, self.show_branch(branch=b))
@@ -433,7 +433,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         return [
             ("Merge " + branch, self.merge(commit=branch)),
             ("Checkout " + branch, self.checkout(commit=branch)),
-            ("Delete " + branch, self.delete_branch(commit=branch))
+            ("Reset " + branch + ' ...', self.choose_reset_options(commit=branch)),
+            ("Delete " + branch, self.delete_branch(commit=branch)),
         ] if not active_branch else [
         ]
 
