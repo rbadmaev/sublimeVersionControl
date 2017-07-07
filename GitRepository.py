@@ -28,9 +28,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Show all modifications...", self.all_modifications()),
             ("REPOSITORY: Show log...", self.log()),
             ("REPOSITORY: Commit changes...", self.choose_commit_options()),
-            ("REPOSITORY: Merge...", self.choose_head_for_merge()),
             ("REPOSITORY: Create branch from last commit...", self.create_branch()),
-            ("REPOSITORY: Show branches...", self.show_branches()),
+            ("REPOSITORY: Branches and tags...", self.show_tags_and_branches()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -268,29 +267,40 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ) for c in commits
         ]
 
+    def _get_commit_actions(self, commit):
+        tags = self.git(['log', commit, '--format=%d']).strip("()\n \t")
+        view = commit + " (" + tags + ")"
+        tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
+
+        return ([
+            ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
+            ("Merge ...", self.choose_tag(tags=tags, action=self.merge)),
+        ] if tags else []) + [
+            ("Create branch from " + view, self.create_branch(commit=commit)),
+            ("Reset to " + view + " ... ", self.choose_reset_options(commit=commit)),
+            ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
+        ]
+
     @menu()
     def show_commit(self, commit):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
-        tags = self.git(['log', commit, '--format=%d']).strip("()\n \t")
-        tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
-        return ([
-            ("Checkout ...", self.choose_checkout_tag(tags=tags)),
-        ] if tags else []) + [
-            ("Create branch from this", self.create_branch(commit=commit)),
-            ("Reset to this...", self.choose_reset_options(commit=commit)),
-            ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
-        ] + [
+        commit_actions = self._get_commit_actions(commit)
+        return commit_actions + [
             (
                 self.get_status_str(f[0]) + '\t' + f[1],
                 self.choose_file_in_commit_action(commit=commit, file_name=f[1], status=f[0])
             ) for f in files
-        ], "Copy message to clipboard"
+        ], commit_actions[-1][0]
+
+    @menu(refresh=True)
+    def show_tag(self, tag):
+        return self._get_commit_actions(tag)
 
     @menu()
-    def choose_checkout_tag(self, tags):
+    def choose_tag(self, tags, action):
         return [
-            (t, self.checkout(commit=t))
+            (t, action(t))
             for t in tags
         ]
 
@@ -382,15 +392,15 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return actions, selected
 
-    @menu(temp=True)
-    def choose_head_for_merge(self):
-        branches = [b.strip() for b in self.git(['branch']).splitlines() if b[0] != '*']
+    @menu()
+    def show_tags_and_branches(self):
+        branches = self.git(['branch']).splitlines()
         tags = self.git(['tag']).splitlines()
         return [
-            ("Branch " + b, self.merge(commit=b))
+            ("Branch " + b, self.show_branch(branch=b))
             for b in branches
         ] + [
-            ("Tag " + t, self.merge(commit=t))
+            ("Tag " + t, self.show_tag(tag=t))
             for t in tags
         ]
 
@@ -416,12 +426,6 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             None)
 
     @menu(refresh=True)
-    def show_branches(self):
-        return [
-            (b, self.show_branch(b)) for b in self.git(['branch']).splitlines()
-        ]
-
-    @menu(refresh=True)
     def show_branch(self, branch):
         active_branch = (branch[0] == '*')
         branch = branch.strip()
@@ -442,20 +446,3 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def delete_branch(self, branch):
         assert branch
         self.git(['branch', '-d', branch], silent=False)
-
-    # @memu(refresh=True)
-    # def show_branches(self):
-    #     return [
-    #         (b, self.show_branch(b)) for b in self.git(['branch']).splitlines()
-    #     ]
-
-    # @menu(refresh=True)
-    # def show_branch(self, branch):
-    #     active_branch = (branch[0] == '*')
-    #     branch = branch.strip()
-
-    #     return [
-    #         ("Merge " + branch, self.merge(commit=branch)),
-    #         ("Checkout " + branch, self.checkout(commit=branch))
-    #     ] if not active_branch else [
-    #     ]
