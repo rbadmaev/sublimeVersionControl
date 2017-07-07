@@ -268,7 +268,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         ]
 
     def _get_commit_actions(self, commit):
-        tags = self.git(['log', commit, '--format=%d']).strip("()\n \t")
+        tags = self.git(['log', commit+'^!', '--format=%d']).strip("()\n \t")
         view = commit + " (" + tags + ")"
         tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
 
