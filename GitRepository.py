@@ -239,7 +239,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             None)
 
     @menu()
-    def log(self, path=None):
+    def log(self, path=None, commit=None):
         TAG = 0
         TITLE = 1
         AUTHOR = 2
@@ -257,6 +257,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 cmd = cmd + ['--follow']
 
             cmd = cmd + ['--', path]
+
+        if commit:
+            cmd = cmd + [commit]
 
         commits = [c.split("!SEP!") for c in self.git(cmd).splitlines()]
 
@@ -281,6 +284,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         ] if tags else []) + [
             ("Create branch from " + view, self.create_branch(commit=commit)),
             ("Reset to " + view + " ... ", self.choose_reset_options(commit=commit)),
+            ("Show log ...", self.log(commit=commit)),
             ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
         ]
 
@@ -428,12 +432,13 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             None,
             None)
 
-    @menu(refresh=True)
+    @menu(temp=True)
     def show_branch(self, branch):
         active_branch = (branch[0] == '*')
         branch = branch.strip()
 
         return [
+            ("Show log ...", self.log(commit=branch)),
             ("Merge " + branch, self.merge(commit=branch)),
             ("Checkout " + branch, self.checkout(commit=branch)),
             ("Reset " + branch + ' ...', self.choose_reset_options(commit=branch)),
