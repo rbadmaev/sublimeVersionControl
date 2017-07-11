@@ -253,6 +253,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             '-10000',
             '--format=%d!SEP!%f!SEP!%cN!SEP!%h!SEP!%ar']
         if path:
+            if os.path.isfile(os.path.join(self.path, path)):
+                cmd = cmd + ['--follow']
+
             cmd = cmd + ['--', path]
 
         commits = [c.split("!SEP!") for c in self.git(cmd).splitlines()]
