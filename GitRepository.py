@@ -28,8 +28,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Show all modifications...", self.all_modifications()),
             ("REPOSITORY: Show log...", self.log()),
             ("REPOSITORY: Commit changes...", self.choose_commit_options()),
-            ("REPOSITORY: Create branch from last commit...", self.create_branch()),
             ("REPOSITORY: Branches and tags...", self.show_tags_and_branches()),
+            ("REPOSITORY: Create branch from HEAD...", self.create_branch()),
+            ("REPOSITORY: Create tag for HEAD...", self.create_tag()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -277,18 +278,22 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         tags = self.git(['log', commit+'^!', '--format=%d']).strip("()\n \t")
         view = commit + " (" + tags + ")"
         tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
+        realTags = self.git(['tag', '-l', '--points-at', commit]).splitlines()
 
         return ([
             ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
             ("Merge ...", self.choose_tag(tags=tags, action=self.merge)),
-        ] if tags else []) + [
+        ] if tags else []) + ([
+            ("Remove tag ...", self.choose_tag(tags=realTags, action=self.remove_tag)),
+        ] if realTags else []) + [
             ("Create branch from " + view, self.create_branch(commit=commit)),
             ("Reset to " + view + " ... ", self.choose_reset_options(commit=commit)),
+            ("Cherry-pick " + view, self.cherry_pick_options(commit=commit)),
             ("Show log ...", self.log(commit=commit)),
             ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
         ]
 
-    @menu()
+    @menu(refresh=True)
     def show_commit(self, commit):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
@@ -304,7 +309,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def show_tag(self, tag):
         return self._get_commit_actions(tag)
 
-    @menu()
+    @menu(temp=True)
     def choose_tag(self, tags, action):
         return [
             (t, action(t))
@@ -322,6 +327,21 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @action()
     def reset_to_commit(self, commit, mode=''):
         self.git(['reset', mode, commit], silent=False)
+
+    @menu(temp=True)
+    def cherry_pick_options(self, commit):
+        return [
+            ("Cherry-pick " + commit, self.cherry_pick(commit=commit)),
+            ("Cherry-pick --no-commit " + commit, self.cherry_pick(commit=commit, options=['--no-commit']))
+        ]
+
+    @action()
+    def cherry_pick(self, commit, options=None):
+        assert commit
+        if options is None:
+            options = []
+
+        self.git(['cherry-pick'] + options + [commit], silent=False)
 
     @menu(temp=True)
     def choose_file_in_commit_action(self, commit, file_name, status):
@@ -415,7 +435,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def merge(self, commit):
         self.git(['merge', commit], silent=False)
 
-    @action()
+    @action(terminate=True)
     def create_branch(self, commit=""):
         def impl(branch_name):
             self.git(
@@ -455,3 +475,19 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def delete_branch(self, branch):
         assert branch
         self.git(['branch', '-d', branch], silent=False)
+
+    @action(terminate=True)
+    def create_tag(self, commit=None):
+        def impl(tag):
+            self.git(['tag', tag] + ([commit] if commit else []))
+
+        self.window.show_input_panel(
+            "Enter tag:",
+            "",
+            impl,
+            None,
+            None)
+
+    @action()
+    def remove_tag(self, tag):
+        self.git(["tag", '-d', tag], silent=False)
