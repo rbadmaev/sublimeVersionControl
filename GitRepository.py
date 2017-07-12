@@ -286,6 +286,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         ] if tags else []) + ([
             ("Remove tag ...", self.choose_tag(tags=realTags, action=self.remove_tag)),
         ] if realTags else []) + [
+            ("Make revert commit", self.make_revert_commit(commit=commit)),
             ("Create branch from " + view, self.create_branch(commit=commit)),
             ("Reset to " + view + " ... ", self.choose_reset_options(commit=commit)),
             ("Cherry-pick " + view, self.cherry_pick_options(commit=commit)),
@@ -491,3 +492,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @action()
     def remove_tag(self, tag):
         self.git(["tag", '-d', tag], silent=False)
+
+    @action()
+    def make_revert_commit(self, commit):
+        self.git(["revert", "--no-edit", commit], silent=False)
