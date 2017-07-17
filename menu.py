@@ -13,6 +13,9 @@ class Action(object):
         self.text = text
         self.func = func
 
+    def isCheckbox(self):
+        return False
+
 
 class CheckBox(Action):
     def __init__(self, text, id=None, checked=False):
@@ -28,6 +31,9 @@ class CheckBox(Action):
 
     def cb(self):
         return '[x] ' if self.checked else '[ ] '
+
+    def isCheckbox(self):
+        return True
 
 
 def  menu(refresh=False, temp=False):
@@ -83,7 +89,7 @@ class Menu:
                         break
 
             def getOptions():
-                options = [cb for cb in actions if isinstance(cb, CheckBox)]
+                options = [cb for cb in actions if cb.isCheckbox()]
                 if not options:
                     return None
 
@@ -97,7 +103,7 @@ class Menu:
 
                     action = actions[index]
                     thisMenu = (
-                        parent if temp and not isinstance(action, CheckBox) else
+                        parent if temp and not action.isCheckbox() else
                         partial(show, index) if not refresh else
                         partial(impl, parent=parent, selectedId=action.id))
 
@@ -172,7 +178,8 @@ class TestMenuCommand(stWindowCommand, Menu):
                     ])
                 ),
                 ('submenu 2/item 2', self.action(partial(sublime.message_dialog, 'submemu 2/item 2'))),
-                ])
+                ('submenu 2/Checkbox menu', self.checkboxMenu()),
+                ], temp=True)
             ),
         ]
 
