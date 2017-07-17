@@ -14,6 +14,22 @@ class Action:
         self.func = func
 
 
+class CheckBox(Action):
+    def __init__(self, text, id=None, checked=False):
+        super(CheckBox, self).__init__(text, self.change, id)
+        self.checked = checked
+        self._text = text
+        self.text = self.cb() + text
+
+    def change(self, parent, selectedId, options):
+        self.checked = not self.checked
+        self.text = self.cb() + self._text
+        parent()
+
+    def cb(self):
+        return '[x] ' if self.checked else '[ ] '
+
+
 def  menu(refresh=False, temp=False):
     def _menu(getActions):
         def impl(self, *args, **kwargs):
@@ -38,9 +54,10 @@ def action(terminate=False):
 
     return _action
 
+
 class Menu:
     def menu(self, getActions, refresh=False, temp=False):
-        def impl(parent, selectedId):
+        def impl(parent=None, selectedId=None, options=None):
             actions = getActions()
             defaultSelectedId = None
             if isinstance(actions, tuple):
@@ -48,8 +65,7 @@ class Menu:
                 actions, defaultSelectedId = actions[0], actions[1]
 
             assert isinstance(actions, list)
-            if actions and isinstance(actions[0], tuple):
-                actions = [Action(a[0], a[1]) for a in actions]
+            actions = [Action(a[0], a[1]) if isinstance(a, tuple) else a for a in actions]
 
             selectedIndex = 0
             if parent:
@@ -66,6 +82,13 @@ class Menu:
                         selectedIndex = i
                         break
 
+            def getOptions():
+                options = [cb for cb in actions if isinstance(cb, CheckBox)]
+                if not options:
+                    return None
+
+                return [cb.id for cb in options if cb.checked]
+
             def show(selectedIndex):
                 def onSelect(index):
                     if parent and index == 0:
@@ -78,7 +101,8 @@ class Menu:
                         partial(show, index) if not refresh else
                         partial(impl, parent=parent, selectedId=action.id))
 
-                    action.func(parent=thisMenu, selectedId=None)
+                    action.func(parent=thisMenu, selectedId=None, options=getOptions())
+
                 self.SelectItem(
                     [a.text for a in actions],
                     onSelect,
@@ -89,8 +113,12 @@ class Menu:
         return impl
 
     def action(self, func, terminate=False):
-        def impl(parent, selectedId):
-            func()
+        def impl(parent, selectedId, options):
+            if options is None:
+                func()
+            else:
+                func(options)
+
             if not terminate and parent:
                 parent()
 
@@ -104,12 +132,13 @@ class TestMenuCommand(stWindowCommand, Menu):
     @menu()
     def buildMenu(self, prefix):
         return [
-            (prefix + "menu...", self.buildMenu(prefix=prefix+"menu/")),
+            (prefix + "menu ...", self.buildMenu(prefix=prefix+"menu/")),
             (prefix + "temporary menu", self.temporaryMenu()),
             (prefix + "action", self.action(func=partial(sublime.message_dialog, prefix+"action is called"))),
             (prefix + "test action", self.testAction()),
             (prefix + "terminated action", self.terminatedAction()),
-            (prefix + "static menu..", self.staticMenu()),
+            (prefix + "static menu ...", self.staticMenu()),
+            (prefix + "Checkbox example ...", self.checkboxMenu())
         ]
 
     @menu(temp=True)
@@ -145,4 +174,13 @@ class TestMenuCommand(stWindowCommand, Menu):
                 ('submenu 2/item 2', self.action(partial(sublime.message_dialog, 'submemu 2/item 2'))),
                 ])
             ),
+        ]
+
+    @menu()
+    def checkboxMenu(self):
+        return [
+            ('Show options', self.action(lambda options: sublime.message_dialog(str(options)))),
+            CheckBox("option A"),
+            CheckBox("option B"),
+            CheckBox("option C"),
         ]
