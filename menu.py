@@ -7,7 +7,7 @@ import sublime
 from .st3_CommandsBase.WindowCommand import stWindowCommand
 
 
-class Action:
+class Action(object):
     def __init__(self, text, func, id=None):
         self.id = id if id else text
         self.text = text
@@ -16,7 +16,7 @@ class Action:
 
 class CheckBox(Action):
     def __init__(self, text, id=None, checked=False):
-        super(CheckBox, self).__init__(text, self.change, id)
+        Action.__init__(self, text, self.change, id)
         self.checked = checked
         self._text = text
         self.text = self.cb() + text
@@ -97,7 +97,7 @@ class Menu:
 
                     action = actions[index]
                     thisMenu = (
-                        parent if temp else
+                        parent if temp and not isinstance(action, CheckBox) else
                         partial(show, index) if not refresh else
                         partial(impl, parent=parent, selectedId=action.id))
 
@@ -176,11 +176,11 @@ class TestMenuCommand(stWindowCommand, Menu):
             ),
         ]
 
-    @menu()
+    @menu(temp=True)
     def checkboxMenu(self):
         return [
             ('Show options', self.action(lambda options: sublime.message_dialog(str(options)))),
-            CheckBox("option A"),
+            CheckBox("option A", id="A"),
             CheckBox("option B"),
             CheckBox("option C"),
         ]
