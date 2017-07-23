@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from copy import copy
+from functools import partial
 import os
 import subprocess
 import re
@@ -7,8 +9,7 @@ import re
 import sublime
 
 from .st3_CommandsBase.WindowCommand import stWindowCommand
-from .menu import Menu, menu, action
-from .menu import Action as MenuAction
+from .menu import menu, action, Menu, CheckBox, Action
 
 
 class GitRepositoryCommand(stWindowCommand, Menu):
@@ -145,7 +146,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 ("FILE: Revert changes", self.revert_file(file_name=file_name)))
 
         actions.extend([
-            ("FILE: Add to ignore", self.add_to_gitignore(file_name=file_name)),
+            ("FILE: Add to ignore", self.add_to_gitignore(path=file_name)),
             ("FILE: Open", self.open_file(path=file_name))
         ])
 
@@ -184,7 +185,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @menu(refresh=True)
     def all_modifications(self):
         return [
-            MenuAction (
+            Action (
                 text=self.get_status_str(f[1]) + '\t' + f[0],
                 func=self.choose_file_action(file_name=f[0], status=f[1]),
                 id=f[0]
@@ -282,7 +283,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return ([
             ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
-            ("Merge ...", self.choose_tag(tags=tags, action=self.merge)),
+            ("Merge ...", self.choose_tag(tags=tags, action=self.choose_merge_options)),
         ] if tags else []) + ([
             ("Remove tag ...", self.choose_tag(tags=realTags, action=self.remove_tag)),
         ] if realTags else []) + [
@@ -399,9 +400,14 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             actions.append((mask, self.append_ignore(mask)))
 
         exts = os.path.basename(path).split('.')[1:]
-        while exts:
-            add_ignore_mask('.'.join(['*'] + exts))
-            exts = exts[1:]
+
+        def add_exts(prefix=""):
+            _exts = copy(exts)
+            while _exts:
+                add_ignore_mask(os.path.join(prefix, '.'.join(['*'] + _exts)))
+                _exts = _exts[1:]
+
+        add_exts()
 
         selected = os.path.basename(path)
         add_ignore_mask(selected)
@@ -411,9 +417,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         paths = path.lstrip(os.path.sep).split(os.path.sep)
         while paths:
-            if os.path.isfile(os.path.join(self.path + os.path.sep.join(paths))):
+            if os.path.isfile(os.path.join(self.path, *paths)):
                 add_ignore_mask(os.path.sep + os.path.sep.join(paths))
-                is_file = False
+                add_exts( os.path.sep + os.path.sep.join(paths[:-1]) )
             else:
                 add_ignore_mask(os.path.sep + os.path.sep.join(paths + ['*']))
             paths = paths[:-1]
@@ -432,9 +438,19 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             for t in tags
         ]
 
+    @menu(temp=True)
+    def choose_merge_options(self, commit):
+        return [
+            ("Merge", partial(self.merge, commit=commit)()),
+            CheckBox('Deny fast-forward', id='--no-ff'),
+        ]
+
     @action(terminate=True)
-    def merge(self, commit):
-        self.git(['merge', commit], silent=False)
+    def merge(self, commit, options=None):
+        if options is None:
+            options = []
+
+        self.git(['merge', commit] + options, silent=False)
 
     @action(terminate=True)
     def create_branch(self, commit=""):
@@ -460,7 +476,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return [
             ("Show log ...", self.log(commit=branch)),
-            ("Merge " + branch, self.merge(commit=branch)),
+            ("Merge " + branch, self.choose_merge_options(commit=branch)),
             ("Checkout " + branch, self.checkout(commit=branch)),
             ("Reset " + branch + ' ...', self.choose_reset_options(commit=branch)),
             ("Delete " + branch, self.delete_branch(commit=branch)),
