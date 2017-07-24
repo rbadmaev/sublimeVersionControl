@@ -285,6 +285,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return[
             ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
+            ("Show commit message", self.show_commit_message(commit=commit)),
             ("Show log ...", self.log(commit=commit)),
             ("Make revert commit", self.make_revert_commit(commit=commit)),
             ("Create branch from " + view, self.create_branch(commit=commit)),
@@ -365,6 +366,20 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 '--pretty=format:%H%n%aD%n%an%n%n%s%n%n%b',
                 '--name-status',
                 commit]).splitlines()))
+
+    @menu()
+    def show_commit_message(self, commit):
+        lines = self.git([
+            'show',
+            '--pretty=format:%H%n%aD%n%an%n%n%s%n%n%b',
+            '--name-status',
+            commit]).splitlines()
+
+        return[
+            (line, self.action(partial(sublime.set_clipboard, line)))
+            for line in lines
+        ]
+
 
     @action(terminate=True)
     def blame_file(self, path):
