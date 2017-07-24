@@ -279,7 +279,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     def choose_commit_action(self, commit):
         tags = self.git(['log', commit+'^!', '--format=%d']).strip("()\n \t")
         view = commit + " (" + tags + ")"
-        tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
+        tags = tags.replace('HEAD -> ', '').replace('tag: ', '').replace(', ', ' ')
+        tags = [t.strip() for t in tags.split()]
         realTags = self.git(['tag', '-l', '--points-at', commit]).splitlines()
 
         return[
