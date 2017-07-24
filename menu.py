@@ -123,7 +123,7 @@ class Menu:
             if options is None:
                 func()
             else:
-                func(options)
+                func(options=options)
 
             if not terminate and parent:
                 parent()
