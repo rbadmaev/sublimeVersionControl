@@ -275,41 +275,39 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ) for c in commits
         ]
 
-    def _get_commit_actions(self, commit):
+    @menu(refresh=True, temp=True)
+    def choose_commit_action(self, commit):
         tags = self.git(['log', commit+'^!', '--format=%d']).strip("()\n \t")
         view = commit + " (" + tags + ")"
         tags = [t.strip() for t in tags.replace('HEAD -> ', '').replace(', ', ' ').split()]
         realTags = self.git(['tag', '-l', '--points-at', commit]).splitlines()
 
-        return ([
-            ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
-            ("Merge ...", self.choose_tag(tags=tags, action=self.choose_merge_options)),
-        ] if tags else []) + ([
-            ("Remove tag ...", self.choose_tag(tags=realTags, action=self.remove_tag)),
-        ] if realTags else []) + [
+        return[
+            ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
+            ("Show log ...", self.log(commit=commit)),
             ("Make revert commit", self.make_revert_commit(commit=commit)),
             ("Create branch from " + view, self.create_branch(commit=commit)),
             ("Reset to " + view + " ... ", self.choose_reset_options(commit=commit)),
             ("Cherry-pick " + view, self.cherry_pick_options(commit=commit)),
-            ("Show log ...", self.log(commit=commit)),
-            ("Copy message to clipboard", self.copy_commit_message(commit=commit)),
-        ]
+        ] + ([
+            ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
+            ("Merge ...", self.choose_tag(tags=tags, action=self.choose_merge_options)),
+        ] if tags else []) + ([
+            ("Remove tag ...", self.choose_tag(tags=realTags, action=self.remove_tag)),
+        ] if realTags else [])
 
     @menu(refresh=True)
     def show_commit(self, commit):
         out = self.git(['show', '--name-status', '--format=', commit])
         files = [f.split('\t') for f in out.splitlines()]
-        commit_actions = self._get_commit_actions(commit)
-        return commit_actions + [
+        return [
+            ("choose action ...", self.choose_commit_action(commit=commit)),
+        ] + [
             (
                 self.get_status_str(f[0]) + '\t' + f[1],
                 self.choose_file_in_commit_action(commit=commit, file_name=f[1], status=f[0])
             ) for f in files
-        ], commit_actions[-1][0]
-
-    @menu(refresh=True)
-    def show_tag(self, tag):
-        return self._get_commit_actions(tag)
+        ]
 
     @menu(temp=True)
     def choose_tag(self, tags, action):
@@ -436,7 +434,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("Branch " + b, self.show_branch(branch=b))
             for b in branches
         ] + [
-            ("Tag " + t, self.show_tag(tag=t))
+            ("Tag " + t, self.choose_commit_action(commit=t))
             for t in tags
         ]
 
