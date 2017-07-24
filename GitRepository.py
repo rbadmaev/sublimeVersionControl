@@ -374,12 +374,14 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         phantoms = []
         row = 0
         for line in self.git(['blame', path]).splitlines():
+            commit, text = line.split(' ', 1)
             pos = view.text_point(row, 0)
             view.add_phantom (
                 "git blame",
                 sublime.Region(pos, pos),
-                line[:line.index('+')-1].replace("  ", " .").replace("(", ""),
-                sublime.LAYOUT_INLINE)
+                '<a href=commit>'+commit+'</a> ' + text[:text.index('+')-1].replace("  ", " .").replace("(", ""),
+                sublime.LAYOUT_INLINE,
+                on_navigate=lambda href: self.show_commit(commit=commit)())
             row += 1
 
     @action(terminate=True)
