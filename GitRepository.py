@@ -448,7 +448,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         tags = self.git(['tag']).splitlines()
         return [
             ("Branch " + b, self.show_branch(branch=b))
-            for b in branches
+            for b in branches if " -> " not in b
         ] + [
             ("Tag " + t, self.choose_commit_action(commit=t))
             for t in tags
