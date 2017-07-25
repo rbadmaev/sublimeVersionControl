@@ -130,6 +130,12 @@ class Menu:
 
         return impl
 
+    def none(self):
+        def impl(parent, selectedId, options):
+            pass
+
+        return impl
+
 
 class TestMenuCommand(stWindowCommand, Menu):
     def run(self):
