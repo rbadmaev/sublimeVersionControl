@@ -393,9 +393,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             view.add_phantom (
                 "git blame",
                 sublime.Region(pos, pos),
-                '<a href=commit>'+commit+'</a> ' + text[:text.index('+')-1].replace("  ", " .").replace("(", ""),
+                '<a href=' + commit + '>'+commit+'</a> ' + text[:text.index('+')-1].replace("  ", " .").replace("(", ""),
                 sublime.LAYOUT_INLINE,
-                on_navigate=lambda href: self.show_commit(commit=commit)())
+                on_navigate=lambda href: self.show_commit(commit=href)())
             row += 1
 
     @action(terminate=True)
