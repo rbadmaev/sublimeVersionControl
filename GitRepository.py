@@ -32,6 +32,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Branches and tags...", self.show_tags_and_branches()),
             ("REPOSITORY: Create branch from HEAD...", self.create_branch()),
             ("REPOSITORY: Create tag for HEAD...", self.create_tag()),
+            ("REPOSITORY: Fetch", self.fetch()),
+            ("REPOSITORY: Pull ...", self.choose_pull_options()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -51,8 +53,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         return commands
 
-    def git(self, args, wait=True, silent=True):
-        show_result = not silent
+    def git(self, args, wait=True, silent=True, output_file=None):
+        show_result = not silent and not output_file
         assert wait or not show_result
         msg = ["git"] + args
         if not silent:
@@ -70,7 +72,11 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
         if wait:
             out, err = p.communicate()
-            out = out.decode("utf-8")
+            if output_file:
+                with open(output_file, "wb") as f:
+                    f.write(out)
+            else:
+                out = out.decode("utf-8")
             if err:
                 sublime.message_dialog(err.decode("utf-8"))
             if show_result and out:
@@ -294,7 +300,10 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         ] + ([
             ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
             ("Merge ...", self.choose_tag(tags=tags, action=self.choose_merge_options)),
-        ] if tags else []) + ([
+        ] if tags else [
+            ("Checkout to " + commit, self.checkout(commit=commit)),
+            ("Merge " + commit, self.choose_merge_options(commit=commit)),
+        ]) + ([
             ("Remove tag ...", self.choose_tag(tags=realTags, action=self.remove_tag)),
         ] if realTags else [])
 
@@ -350,7 +359,10 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         while len(status) < 2:
             status += ' '
         actions = [
-            ("FILE: Diff", self.diff_for_file_in_commit(commit=commit, file=file_name))]
+            ("FILE: Diff", self.diff_for_file_in_commit(commit=commit, file=file_name)),
+            ("FILE: Revert to this revision", self.revert_file_to_revision(commit=commit, file=file_name)),
+            ("FILE: Revert to previous revision", self.revert_file_to_revision(commit=commit + '^', file=file_name)),
+        ]
 
         return actions
 
@@ -528,3 +540,25 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @action()
     def make_revert_commit(self, commit):
         self.git(["revert", "--no-edit", commit], silent=False)
+
+    @action()
+    def fetch(self):
+        self.git('fetch')
+
+    @menu(temp=True)
+    def choose_pull_options(self):
+        return [
+            ("Pull and rebase", self.pool(['--rebase'])),
+            ("Pull fast forward only", self.pool(['--ff-only'])),
+        ]
+
+    @action()
+    def pool(self, options):
+        self.git(['pull'] + options, silent=False)
+
+    @action()
+    def revert_file_to_revision(self, commit, file):
+        self.git(
+            ['show', commit+":"+file],
+            silent=False,
+            output_file=os.path.join(self.path, file))
