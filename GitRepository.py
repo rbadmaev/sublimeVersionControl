@@ -160,6 +160,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action(terminate=True)
     def open_file(self, path):
+        if not os.path.isabs(path):
+            path = os.path.join(self.path, path)
+
         self.window.open_file(path)
 
     @menu(refresh=True, temp=True)
