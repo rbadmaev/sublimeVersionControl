@@ -191,9 +191,18 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             "[-] " if status == "D " else \
             status
 
+    @menu(temp=True)
+    def all_modifications_actions(self):
+        return [
+            ("Add all to index", self.add_all_modifications_to_index()),
+            ("Remove all from index", self.remove_all_modifications_from_index()),
+        ]
+
     @menu(refresh=True)
     def all_modifications(self):
         return [
+            ("Batch actions...", self.all_modifications_actions()),
+        ] + [
             Action (
                 text=self.get_status_str(f[1]) + '\t' + f[0],
                 func=self.choose_file_action(file_name=f[0], status=f[1]),
@@ -565,3 +574,11 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ['show', commit+":"+file],
             silent=False,
             output_file=os.path.join(self.path, file))
+
+    @action()
+    def add_all_modifications_to_index(self):
+        self.git(['add', '-A'])
+
+    @action()
+    def remove_all_modifications_from_index(self):
+        self.git(['reset', 'HEAD', '--', '.'])
