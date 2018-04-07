@@ -5,6 +5,7 @@ from functools import partial
 import os
 import subprocess
 import re
+import shutil
 
 import sublime
 
@@ -19,6 +20,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         self.path = path
         self.git(['init'])
         self.run()
+
+    def full_path(self, path):
+        return os.path.join(self.path, path)
 
     def run(self):
         self.initialMenu()(None, None)
@@ -102,6 +106,18 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         self.git(["add", file_name])
 
     @action()
+    def partial_add_to_index(self, file_name=None):
+        if not file_name:
+            file_name = self.window.active_view().file_name()
+
+        backup_file_name = self.full_path(file_name) + ".backup";
+        shutil.copyfile(self.full_path(file_name), backup_file_name)
+
+        self.git(["diff", file_name], wait=True)
+        self.git(["add", file_name])
+        shutil.move(backup_file_name, self.full_path(file_name))
+
+    @action()
     def remove_from_index(self, file_name):
         assert (file_name)
 
@@ -131,8 +147,10 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 ("FILE: Diff staged for commit", self.diff(staged=True, file_name=file_name)))
 
         if status[1] != " ":
-            actions.append(
-                ("FILE: Add to index", self.add_to_index(file_name=file_name)))
+            actions.extend([
+                ("FILE: Add to index", self.add_to_index(file_name=file_name)),
+                ("FILE: Partial add to index", self.partial_add_to_index(file_name=file_name)),
+            ])
 
         if status[0] != " " and status[0] != "?":
             actions.append(
