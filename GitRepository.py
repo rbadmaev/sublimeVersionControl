@@ -34,6 +34,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Create tag for HEAD...", self.create_tag()),
             ("REPOSITORY: Fetch", self.fetch()),
             ("REPOSITORY: Pull ...", self.choose_pull_options()),
+            ("REPOSITORY: Push ...", self.choose_push_options()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -564,9 +565,21 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("Pull fast forward only", self.pool(['--ff-only'])),
         ]
 
+    @menu(temp=True)
+    def choose_push_options(self):
+        return [
+            ("Push current branch", self.push(['-u', 'origin', 'HEAD'])),
+            ("Pull ALL branches", self.push(['--all'])),
+        ]
+
     @action()
     def pool(self, options):
         self.git(['pull'] + options, silent=False)
+
+    @action()
+    def push(self, options):
+        self.git(['push'] + options, silent=False)
+
 
     @action()
     def revert_file_to_revision(self, commit, file):
