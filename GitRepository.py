@@ -574,7 +574,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action()
     def fetch(self):
-        self.git('fetch')
+        self.git(['fetch'])
 
     @menu(temp=True)
     def choose_pull_options(self):
