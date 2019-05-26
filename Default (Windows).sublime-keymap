@@ -1,0 +1,16 @@
+[
+	 // {
+  //       "keys": ["f9"],
+  //       "command": "show_overlay",
+  //       "args":
+  //       {
+  //           "overlay": "command_palette",
+  //           "text": "MY GIT: "
+  //       }
+  //   },
+    { "keys": ["f9"], "command": "version_control" },
+    { "keys": ["alt+f9"], "command": "test_menu" },
+]
+
+
+// 8493f6ad59fe7c7f62cab09a46ee3972bc688775801992086d3ef72941aaf04f
