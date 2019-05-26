@@ -38,7 +38,7 @@ class VersionControlCommand(stWindowCommand, Menu):
             return
 
         Self.SelectItem(
-            [v.Name() + ": " + v.RepositoryPath for v in repositories],
+            [v.Name() + ": " + v.path for v in repositories],
             lambda index: repositories[index].run())
 
     @menu()

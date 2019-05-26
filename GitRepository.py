@@ -14,6 +14,9 @@ from .menu import menu, action, Menu, CheckBox, Action
 
 
 class GitRepositoryCommand(stWindowCommand, Menu):
+    def Name(self):
+        return "GIT"
+
     @action()
     def createRepository(self, path):
         assert os.path.isdir(path)
@@ -157,8 +160,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 ("FILE: Remove from index", self.remove_from_index(file_name=file_name)))
 
         if status[1] == "M":
-            actions.append(
-                ("FILE: Diff not staged changes", self.diff(staged=False, file_name=file_name)))
+            actions.extend([
+                ("FILE: Diff not staged changes", self.diff(staged=False, file_name=file_name)),
+            ])
 
         if "D" not in status:
             actions.extend([
@@ -328,6 +332,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("Create branch from " + view, self.create_branch(commit=commit)),
             ("Reset to " + view + " ... ", self.choose_reset_options(commit=commit)),
             ("Cherry-pick " + view, self.cherry_pick_options(commit=commit)),
+            # ("Blame revision" + view, self.cherry_pick_options(commit=commit)),
         ] + ([
             ("Checkout ...", self.choose_tag(tags=tags, action=self.checkout)),
             ("Merge ...", self.choose_tag(tags=tags, action=self.choose_merge_options)),
@@ -425,12 +430,17 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
 
     @action(terminate=True)
-    def blame_file(self, path):
+    def blame_file(self, path, fromRevision=None):
         view = self.window.active_view()
         view.erase_phantoms ("git blame")
         phantoms = []
         row = 0
-        for line in self.git(['blame', path]).splitlines():
+        command =  ['blame', path]
+        # if fromRevision not is None:
+        #     command += [fromRevision + "^"]
+        #     view =
+
+        for line in self.git(command).splitlines():
             commit, text = line.split(' ', 1)
             pos = view.text_point(row, 0)
             view.add_phantom (
