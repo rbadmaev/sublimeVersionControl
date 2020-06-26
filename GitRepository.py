@@ -97,9 +97,9 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             file_name = self.window.active_view().file_name()
 
         if staged:
-            self.git(["diff", "--staged", file_name], wait=False)
+            self.git(["difftool", "--staged", file_name], wait=False)
         else:
-            self.git(["diff", file_name], wait=False)
+            self.git(["difftool", file_name], wait=False)
 
     @action()
     def add_to_index(self, file_name=None):
@@ -116,7 +116,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         backup_file_name = self.full_path(file_name) + ".backup";
         shutil.copyfile(self.full_path(file_name), backup_file_name)
 
-        self.git(["diff", file_name], wait=True)
+        self.git(["difftool", file_name], wait=True)
         self.git(["add", file_name])
         shutil.move(backup_file_name, self.full_path(file_name))
 
@@ -404,7 +404,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @action()
     def diff_for_file_in_commit(self, commit, file):
-        self.git(["diff", commit+"^!", '--', file], wait=False)
+        self.git(["difftool", commit+"^!", '--', file], wait=False)
 
     @action(terminate=True)
     def copy_commit_message(self, commit):
