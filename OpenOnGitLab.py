@@ -33,6 +33,8 @@ class OpenOnGitlabCommand(sublime_plugin.WindowCommand):
         url, err = p.communicate()
         url = url.decode().strip()
         url = re.sub('[^/@]*@', '', url)
+        if not url.startswith("https://"):
+            url = "https://" + re.sub(':', '/', url)
 
         if len(url) > 4 and url[-4:] == ".git":
             url = url[:-4]
