@@ -42,6 +42,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ("REPOSITORY: Fetch", self.fetch()),
             ("REPOSITORY: Pull ...", self.choose_pull_options()),
             ("REPOSITORY: Push ...", self.choose_push_options()),
+            ("REPOSITORY: Clean", self.clean()),
         ]
 
         if self.window.active_view() and self.window.active_view().file_name():
@@ -537,6 +538,10 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             impl,
             None,
             None)
+
+    @action(terminate=True)
+    def clean(self):
+        self.git(['clean', '-f'], silent=False)
 
     @menu(temp=True)
     def show_branch(self, branch):
