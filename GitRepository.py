@@ -224,7 +224,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
 
     @menu(refresh=True)
     def all_modifications(self):
-        return [
+        return ([
             ("Batch actions...", self.all_modifications_actions()),
         ] + [
             Action (
@@ -232,7 +232,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 func=self.choose_file_action(file_name=f[0], status=f[1]),
                 id=f[0]
             ) for f in self.get_all_modified_files()
-        ]
+        ],
+        os.path.relpath(self.window.active_view().file_name(), self.path))
 
     @menu()
     def choose_commit_options(self):
