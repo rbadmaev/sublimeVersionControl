@@ -220,6 +220,8 @@ class GitRepositoryCommand(stWindowCommand, Menu):
         return [
             ("Add all to index", self.add_all_modifications_to_index()),
             ("Remove all from index", self.remove_all_modifications_from_index()),
+            ("Add all to index exclude .orig", self.add_all_modifications_to_index_exclude_orig()),
+            ("Add all to index exclude new files", self.add_all_modifications_to_index_update()),
         ]
 
     @menu(refresh=True)
@@ -625,6 +627,15 @@ class GitRepositoryCommand(stWindowCommand, Menu):
     @action()
     def add_all_modifications_to_index(self):
         self.git(['add', '-A'])
+
+    @action()
+    def add_all_modifications_to_index_exclude_orig(self):
+        self.git(['add', '-A'])
+        self.git(['reset', '--', '*.orig'])
+
+    @action()
+    def add_all_modifications_to_index_update(self):
+        self.git(['add', '-u'])
 
     @action()
     def remove_all_modifications_from_index(self):
