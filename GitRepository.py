@@ -51,6 +51,7 @@ class GitRepositoryCommand(stWindowCommand, Menu):
             ]
             commands.extend([
                 ("FILE: Show log...", self.log(path=active_file)),
+                ("FOLDER: Show log...", self.chooseFolderForLog(path=active_file)),
                 ("FILE: Blame", self.blame_file(path=active_file)),
                 ("FILE: Hide blame", self.hide_blame()),
             ])
@@ -318,6 +319,24 @@ class GitRepositoryCommand(stWindowCommand, Menu):
                 ],
                 self.show_commit(commit=c[HASH]),
             ) for c in commits
+        ]
+
+    @menu()
+    def chooseFolderForLog(self, path, commit=None):
+        folders = []
+        while(True):
+            path = os.path.dirname(path)
+            if len(path) == 0:
+                break;
+
+            folders += [path]            
+
+        return [
+            Action (
+                text=f,
+                func=self.log(path=os.path.join(self.path, f), commit=commit),
+                id=f
+            ) for f in folders
         ]
 
     @menu(refresh=True, temp=True)
