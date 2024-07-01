@@ -1,4 +1,4 @@
 [
     { "keys": ["f9"], "command": "version_control" },
-    { "keys": ["ctrl+alt+g"], "command": "open_on_gitlab"},
+    { "keys": ["ctrl+alt+g"], "command": "open_on_gitlab"}
 ]
