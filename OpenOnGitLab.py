@@ -39,13 +39,19 @@ class OpenOnGitlabCommand(sublime_plugin.WindowCommand):
         if len(url) > 4 and url[-4:] == ".git":
             url = url[:-4]
 
-        p = subprocess.Popen(["git", "rev-parse", "HEAD"],
+        p = subprocess.Popen(["git", "rev-parse", "--abbrev-ref", "HEAD"],
             stdout=subprocess.PIPE,
             cwd=os.path.dirname(self.window.active_view().file_name()))
         branch, err = p.communicate()
         branch = branch.decode().strip()
 
+        p = subprocess.Popen(["git", "rev-parse", "origin/" + branch],
+            stdout=subprocess.PIPE,
+            cwd=os.path.dirname(self.window.active_view().file_name()))
+        revision, err = p.communicate()
+        revision = revision.decode().strip()
+
         row, col = self.window.active_view().rowcol(self.window.active_view().sel()[0].begin())
 
-        return url + '/blob/' + branch + '/' + self.getRelativePath() + '#L' + str(row + 1)
+        return url + '/blob/' + revision + '/' + self.getRelativePath() + '#L' + str(row + 1)
 
